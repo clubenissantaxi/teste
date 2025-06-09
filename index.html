@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+
+<html lang="pt-br">
+
+<head>
+
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyBfBqOOcOmog_6V9ZUxc02PtVYv2Z64mEQ",
+      authDomain: "autofaq-c0c21.firebaseapp.com",
+      databaseURL: "https://autofaq-c0c21-default-rtdb.firebaseio.com",
+      projectId: "autofaq-c0c21",
+      storageBucket: "autofaq-c0c21.firebasestorage.app",
+      messagingSenderId: "174442660737",
+      appId: "1:174442660737:web:2c2405b7bc3439c10a1e80"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+  </script>
+
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Clube Nissan Kicks Táxi</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&amp;display=swap" rel="stylesheet" />
+    <link href="styles.css" rel="stylesheet" />
+
+<style>
+  .hamburger {
+    display: block !important;
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    font-size: 2rem;
+    z-index: 9999;
+    background: white;
+    border-radius: 10px;
+    padding: 8px;
+  }
+</style>
+
+</head>
+
+<body>
+    <header>
+        <img alt="Logo" class="logo" src="imagens/logo_taxi.jpeg" />
+        <h1>Clube Nissan Kicks Táxi</h1>
+    </header>
+<!-- Botão Hamburguer -->
+<div class="hamburger" onclick="toggleMobileMenu()">
+  ☰
+</div>
+
+<!-- Menu Mobile -->
+<nav id="mobileMenu" class="mobile-menu">
+  <div class="menu-item">Área Adm</div>
+  <div class="menu-item">Seja um Parceiro/Serviço</div>
+  <div class="menu-item">Contatos</div>
+</nav>
+
+    <div class="container">
+
+        <div class="highlights">
+            <div class="botao-wrapper">
+                <div class="highlight servicos">
+                    <img alt="Serviços" src="imagens/serv.png" />
+                </div>
+                <div class="label">Serviços</div>
+<div id="submenu-servicos" class="submenu-servicos">
+  <div class="submenu-item" onclick="abrirServicosCategoria('suspensao')">Suspensão</div>
+  <div class="submenu-item" onclick="abrirServicosCategoria('troca-oleo')">Troca de óleo</div>
+  <div class="submenu-item" onclick="abrirServicosCategoria('troca-oleo-cambio')">Troca de Óleo Câmbio</div>
+  <div class="submenu-item" onclick="abrirServicosCategoria('mecanica')">Mecânica geral</div>
+  <div class="submenu-item" onclick="abrirServicosCategoria('lanternagem')">Lanternagem/Pintura</div>
+  <div class="submenu-item" onclick="abrirServicosCategoria('ar')">Ar Condicionado</div>
+</div>
+
+            </div>
+            <div class="botao-wrapper">
+                <div class="highlight noticias">
+                    <img alt="noticias" src="imagens/noticias.jpg" />
+                </div>
+                <div class="label">Notícias</div>
+            </div>
+            <div class="botao-wrapper">
+                <div class="highlight manual">
+                    <img alt="Manual" src="imagens/manual.png" />
+                </div>
+                <div class="label">Manual</div>
+            </div>
+            <div class="botao-wrapper">
+                <div class="highlight faq" onclick="mostrarFAQ()">
+                    <img alt="FAQ" src="imagens/botao_faq.png" />
+                </div>
+                <div class="label">FAQ</div>
+            </div>
+
+            <!-- FAQ Container at bottom -->
+            <div id="faq-container" style="display:none; margin: 20px;">
+                <iframe height="800" id="faq-frame" src="acessofaq.html" style="border:none;" width="100%"></iframe>
+            </div>
+            
+<!-- Container de Notícias -->
+<!-- Container Suspensão -->
+<div id="container-suspensao" class="servicos-container" style="display: none;">
+  <h2 class="servicos-titulo">🔧 Serviços de Suspensão</h2>
+  <div class="servico-linha">
+    <div><strong>Nome:</strong> Leonardo</div>
+    <div><strong>Telefone:</strong> <a href="tel:+5521969852743">(21) 96985-2743</a></div>
+    <div><strong>Email:</strong> <a href="mailto:leo_rrodrigues@yahoo.com.br">leo_rrodrigues@yahoo.com.br</a></div>
+    <div><strong>WhatsApp:</strong> <a href="https://wa.me/5521969852743" target="_blank">Conversar</a></div>
+  </div>
+</div>
+
+<!-- Container Troca de Óleo -->
+<div id="container-troca-oleo" class="servicos-container" style="display: none;">
+  <h2 class="servicos-titulo">Troca de Óleo</h2>
+  <p>Exemplo: Serviço especializado em troca rápida de óleo de motor.</p>
+</div>
+
+<!-- Container Troca de Óleo Câmbio -->
+<div id="container-troca-oleo-cambio" class="servicos-container" style="display: none;">
+  <h2 class="servicos-titulo">Troca de Óleo do Câmbio</h2>
+  <p>Exemplo: Troca com máquina e diagnóstico.</p>
+</div>
+
+<!-- Container Mecânica Geral -->
+<div id="container-mecanica" class="servicos-container" style="display: none;">
+  <h2 class="servicos-titulo">Mecânica Geral</h2>
+  <p>Exemplo: Manutenção geral preventiva e corretiva.</p>
+</div>
+
+<!-- Container Lanternagem -->
+<div id="container-lanternagem" class="servicos-container" style="display: none;">
+  <h2 class="servicos-titulo">Lanternagem / Pintura</h2>
+  <p>Exemplo: Serviços de funilaria e pintura profissional.</p>
+</div>
+
+<!-- Container Ar Condicionado -->
+<div id="container-ar" class="servicos-container" style="display: none;">
+  <h2 class="servicos-titulo">Ar Condicionado</h2>
+  <p>Exemplo: Higienização e recarga de gás.</p>
+</div>
+
+<div id="servicos-container" class="servicos-container" style="display: none;">
+  <h2 class="servicos-titulo">🔧 Serviços & Parceiros</h2>
+  <div class="servico-linha">
+    <div><strong>Nome:</strong> Leonardo</div>
+    <div><strong>Telefone:</strong> <a href="tel:+5521969852743">(21) 96985-2743</a></div>
+    <div><strong>Email:</strong> <a href="mailto:leo_rrodrigues@yahoo.com.br">leo_rrodrigues@yahoo.com.br</a></div>
+    <div><strong>WhatsApp:</strong> <a href="https://wa.me/5521969852743" target="_blank">Conversar</a></div>
+  </div>
+  <div class="servico-linha">
+    <div><strong>Nome:</strong> Mecânica Rápida</div>
+    <div><strong>Telefone:</strong> <a href="tel:+5511988888888">+55 11 98888-8888</a></div>
+    <div><strong>Email:</strong> <a href="mailto:suporte@mecanicarapida.com">suporte@mecanicarapida.com</a></div>
+    <div><strong>WhatsApp:</strong> <a href="https://wa.me/5511988888888" target="_blank">Conversar</a></div>
+  </div>
+</div>
+
+<div id="noticias-container" class="noticias-container" style="display: none;">
+  <h2 class="noticias-titulo">📢 Últimas Notícias</h2>
+  <div class="noticia">
+    <div class="noticia-data">08/06/2025 10:00</div>
+    <div class="noticia-texto">Início do projeto do menu mobile concluído com sucesso.</div>
+  </div>
+  <div class="noticia">
+    <div class="noticia-data">08/06/2025 11:00</div>
+    <div class="noticia-texto">Layout do submenu aprimorado para melhor experiência mobile.</div>
+  </div>
+  <div class="noticia">
+    <div class="noticia-data">08/06/2025 11:30</div>
+    <div class="noticia-texto">Adicionado sistema de notícias dinâmico ao projeto.</div>
+  </div>
+  <div class="noticia">
+    <div class="noticia-data">08/06/2025 12:00</div>
+    <div class="noticia-texto">Ajuste visual no botão de menu hambúrguer finalizado.</div>
+  </div>
+  <div class="noticia">
+    <div class="noticia-data">08/06/2025 12:30</div>
+    <div class="noticia-texto">Preparando integração com backend para gerenciar notícias.</div>
+  </div>
+</div>
+
+<div id="container-parceiro" class="form-container" style="display:none;">
+  <h2>Cadastro de Parceiro</h2>
+  <label for="empresa">Nome da Empresa:</label>
+  <input type="text" id="empresa" placeholder="Ex: Mecânica Rápida" />
+
+  <label for="endereco">Endereço:</label>
+  <input type="text" id="endereco" placeholder="Rua, número, bairro" />
+
+  <label for="telefone">Telefone:</label>
+  <input type="text" id="telefone" placeholder="(XX) XXXXX-XXXX" />
+
+  <label for="whatsapp">WhatsApp:</label>
+  <input type="text" id="whatsapp" placeholder="(XX) XXXXX-XXXX" />
+
+  <label for="tipo">Tipo de Serviço:</label>
+  <select id="tipo">
+    <option value="">Selecione abaixo</option>
+    <option value="suspensao">Suspensão</option>
+    <option value="troca-oleo">Troca de óleo</option>
+    <option value="troca-oleo-cambio">Troca de Óleo Câmbio</option>
+    <option value="mecanica">Mecânica geral</option>
+    <option value="lanternagem">Lanternagem/Pintura</option>
+    <option value="ar">Ar Condicionado</option>
+  </select>
+
+  <div style="margin-top: 16px;">
+    <button onclick="salvarParceiro()">Salvar</button>
+    <button onclick="fecharContainer('container-parceiro')">Fechar</button>
+  </div>
+</div>
+
+</div> <!-- Fechando container principal -->
+
+<script src="scripts.js"></script>
+</body>
+
+</html>

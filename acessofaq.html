@@ -1,0 +1,98 @@
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Identificação para FAQ</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: transparent;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      min-height: 200px;
+    }
+
+    .caixa-login {
+      background-color: #ffffff;
+      margin-top: 30px;
+      padding: 20px 25px;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      max-width: 320px;
+      width: 90%;
+      text-align: center;
+    }
+
+    h2 {
+      margin-bottom: 15px;
+      font-size: 1.2rem;
+    }
+
+    input {
+      padding: 10px;
+      font-size: 1rem;
+      width: 100%;
+      margin-bottom: 10px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      padding: 10px 20px;
+      font-size: 1rem;
+      background-color: #0066cc;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      width: 100%;
+    }
+
+    button:hover {
+      background-color: #004a99;
+    }
+  </style>
+</head>
+<body>
+  <div class="caixa-login" id="caixa-login">
+    <h2>Digite seu Nome / Apelido</h2>
+    <input type="text" id="nome" placeholder="Ex: João Taxista" />
+    <button onclick="entrarFAQ()">Entrar na FAQ</button>
+  </div>
+
+  <script>
+    let cliqueForaAtivo = true;
+
+    window.onload = function() {
+      const nomeSalvo = localStorage.getItem("faq_user");
+      if (nomeSalvo) {
+        document.getElementById("nome").value = nomeSalvo;
+      }
+    }
+
+    function entrarFAQ() {
+      const nome = document.getElementById("nome").value.trim();
+      if (!nome) {
+        alert("Por favor, digite seu nome.");
+        return;
+      }
+      localStorage.setItem("faq_user", nome);
+      cliqueForaAtivo = false; // desativa o fechamento por clique fora
+      parent.postMessage('abrirFAQCompleta', '*');
+    }
+
+    document.addEventListener("click", function(e) {
+      if (!cliqueForaAtivo) return;
+      const caixa = document.getElementById("caixa-login");
+      if (!caixa.contains(e.target)) {
+        parent.postMessage("fecharFAQ", "*");
+      }
+    });
+  </script>
+</body>
+</html>
