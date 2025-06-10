@@ -1,8 +1,4 @@
-/* 
-  🔄 EFEITO CARROSSEL HORIZONTAL
-  Estiliza a área dos botões para que possam deslizar horizontalmente 
-  com rolagem suave. As setas aparecem nas laterais.
-*/
+/* 🎨 Estilos principais do site */
 
 * {
   box-sizing: border-box;
@@ -28,17 +24,9 @@ header img.logo {
 }
 
 @keyframes pulse {
-  0% {
-    transform: scale(1);
-  }
-
-  50% {
-    transform: scale(1.07);
-  }
-
-  100% {
-    transform: scale(1);
-  }
+  0% { transform: scale(1); }
+  50% { transform: scale(1.07); }
+  100% { transform: scale(1); }
 }
 
 header h1 {
@@ -53,14 +41,24 @@ header h1 {
   padding: 20px;
 }
 
-/* Estilo da faixa de botões rolável */
-.highlights {
+/* 🔄 Estilo do carrossel horizontal */
+.carrossel-container {
   display: flex;
-  flex-wrap: wrap;
+  align-items: center;
   justify-content: center;
-  gap: 20px;
+  gap: 10px;
 }
 
+.highlights {
+  display: flex;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  padding: 10px 0;
+  gap: 20px;
+  max-width: 90vw;
+}
+
+/* Estilo dos botões visuais */
 .highlight {
   width: 90px;
   height: 90px;
@@ -86,33 +84,14 @@ header h1 {
   object-fit: contain;
 }
 
-/* Ajustes individuais */
+/* Tamanhos personalizados para ícones */
+.highlight.botao_serv img { width: 100%; height: 100%; }
+.highlight.botao_noticias img { width: 115%; height: 115%; }
+.highlight.botao_manual img { width: 82%; height: 82%; }
+.highlight.botao_faq img { width: 180%; height: 180%; }
+.highlight.botao_posto img { width: 100%; height: 100%; }
 
-.highlight.botao_serv img {
-  width: 100%;
-  height: 100%;
-}
-
-.highlight.botao_noticias img {
-  width: 115%;
-  height: 115%;
-}
-
-.highlight.botao_manual img {
-  width: 82%;
-  height: 82%;
-}
-
-.highlight.botao_faq img {
-  width: 180%;
-  height: 180%;
-}
-
-.highlight.botao_posto img {
-  width: 100%;
-  height: 100%;
-}
-
+/* Legenda abaixo dos botões */
 .label {
   margin-top: 6px;
   font-family: 'Bebas Neue', sans-serif;
@@ -121,6 +100,7 @@ header h1 {
   opacity: 0.5;
 }
 
+/* Estrutura de cada botão com imagem + legenda */
 .botao-wrapper {
   display: flex;
   flex-direction: column;
@@ -128,31 +108,15 @@ header h1 {
   position: relative;
 }
 
-.mobile-menu {
-  display: none;
-  flex-direction: column;
-  background: #fff;
-  position: absolute;
-  top: 60px;
-  right: 20px;
-  width: max-content;
-  min-width: 200px;
-  max-width: 90%;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  z-index: 999;
-  padding: 10px 0;
-  border-radius: 8px;
-}
-
-.mobile-menu .menu-item {
-  padding: 14px 20px;
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 1.4em;
-  color: #777;
-  font-weight: bold;
-  border-bottom: 1px solid #eee;
-}
-
-.mobile-menu .menu-item:last-child {
-  border-bottom: none;
+/* ◀️▶️ Estilo das setas laterais */
+.scroll-button {
+  font-size: 2em;
+  color: #555;
+  cursor: pointer;
+  user-select: none;
+  padding: 10px;
+  background: rgba(255,255,255,0.9);
+  border-radius: 50%;
+  box-shadow: 0 0 5px rgba(0,0,0,0.2);
+  z-index: 1;
 }
