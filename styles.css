@@ -1,3 +1,9 @@
+/* 
+  🔄 EFEITO CARROSSEL HORIZONTAL
+  Estiliza a área dos botões para que possam deslizar horizontalmente 
+  com rolagem suave. As setas aparecem nas laterais.
+*/
+
 * {
   box-sizing: border-box;
 }
@@ -47,6 +53,7 @@ header h1 {
   padding: 20px;
 }
 
+/* Estilo da faixa de botões rolável */
 .highlights {
   display: flex;
   flex-wrap: wrap;
@@ -80,24 +87,30 @@ header h1 {
 }
 
 /* Ajustes individuais */
-.highlight.faq img {
-  width: 300%;
-  height: 300%;
+
+.highlight.botao_serv img {
+  width: 100%;
+  height: 100%;
 }
 
-.highlight.noticias img {
+.highlight.botao_noticias img {
   width: 115%;
   height: 115%;
 }
 
-.highlight.manual img {
+.highlight.botao_manual img {
   width: 82%;
   height: 82%;
 }
 
-.highlight.contatos img {
-  width: 82%;
-  height: 82%;
+.highlight.botao_faq img {
+  width: 180%;
+  height: 180%;
+}
+
+.highlight.botao_posto img {
+  width: 100%;
+  height: 100%;
 }
 
 .label {
@@ -115,95 +128,6 @@ header h1 {
   position: relative;
 }
 
-.submenu {
-  display: none;
-  position: absolute;
-  top: 100px;
-  background: white;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-  border-radius: 10px;
-  padding: 10px;
-  z-index: 10;
-  animation: cascade 0.4s ease forwards;
-}
-
-.submenu-item {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 6px 12px;
-  font-family: 'Bebas Neue', sans-serif;
-  color: #333;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-
-.submenu-item:hover {
-  background: #f0f0f0;
-}
-
-.submenu-item img {
-  width: 24px;
-  height: 24px;
-}
-
-@keyframes cascade {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@media (max-width: 600px) {
-  .highlight img[style] {
-    width: 82% !important;
-    height: 82% !important;
-  }
-
-  .highlight {
-    width: 70px;
-    height: 70px;
-  }
-
-  .label {
-    font-size: 1.1em;
-  }
-}
-
-
-/* Ajustes de tamanho para ícones de redes sociais no submenu */
-.icon-instagram {
-  width: 22px;
-  height: 22px;
-}
-
-.icon-facebook {
-  width: 24px;
-  height: 24px;
-}
-
-.icon-youtube {
-  width: 20px;
-  height: 20px;
-}
-.hamburger {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  z-index: 1001;
-  display: none;
-  font-size: 2rem;
-  padding: 12px;
-  cursor: pointer;
-  font-family: 'Bebas Neue', sans-serif;
-  color: #aaa;
-}
-
 .mobile-menu {
   display: none;
   flex-direction: column;
@@ -214,7 +138,7 @@ header h1 {
   width: max-content;
   min-width: 200px;
   max-width: 90%;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   z-index: 999;
   padding: 10px 0;
   border-radius: 8px;
@@ -231,192 +155,4 @@ header h1 {
 
 .mobile-menu .menu-item:last-child {
   border-bottom: none;
-}
-
-@media (max-width: 768px) {
-  .hamburger {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  z-index: 1001;
-    display: block;
-  }
-
-  .highlights {
-    margin-top: 60px;
-  }
-}
-
-.noticias-container {
-  margin-top: 40px;
-  padding: 20px;
-  background: #fff;
-  border-radius: 10px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-  max-width: 800px;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.noticias-titulo {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 1.8rem;
-  margin-bottom: 20px;
-  color: #333;
-  border-bottom: 2px solid #ccc;
-  padding-bottom: 10px;
-}
-
-.noticia {
-  border-left: 4px solid #888;
-  padding-left: 12px;
-  margin-bottom: 16px;
-}
-
-.noticia-data {
-  font-size: 0.85rem;
-  color: #777;
-  margin-bottom: 4px;
-}
-
-.noticia-texto {
-  font-size: 1.05rem;
-  color: #333;
-}
-
-.servicos-container {
-  margin-top: 40px;
-  padding: 20px;
-  background: #fff;
-  border-radius: 10px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-  max-width: 800px;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.servicos-titulo {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 1.8rem;
-  margin-bottom: 20px;
-  color: #333;
-  border-bottom: 2px solid #ccc;
-  padding-bottom: 10px;
-}
-
-.servico-linha {
-  display: flex;
-  flex-direction: column;
-  border-left: 4px solid #4caf50;
-  padding-left: 12px;
-  margin-bottom: 16px;
-  font-size: 1rem;
-}
-
-.servico-linha a {
-  color: #0066cc;
-  text-decoration: none;
-}
-
-.servico-linha a:hover {
-  text-decoration: underline;
-}
-
-.submenu-servicos {
-  display: none;
-  position: absolute;
-  top: 90px;
-  background: #fff;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-  border-radius: 10px;
-  padding: 10px 0;
-  z-index: 1000;
-  right: 0;
-  font-family: 'Bebas Neue', sans-serif;
-  width: max-content;
-  min-width: 200px;
-}
-
-.submenu-servicos .submenu-item {
-  padding: 10px 20px;
-  font-size: 1.2rem;
-  color: #777;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-.submenu-servicos .submenu-item:hover {
-  background: #f5f5f5;
-}
-
-/* Ajustes de sobreposição */
-.servicos-container,
-.noticias-container,
-#faq-container {
-  position: relative;
-  z-index: 900;
-  margin-top: 20px;
-}
-
-
-@media (max-width: 600px) {
-  .submenu-servicos {
-    left: 10px !important;
-    right: auto !important;
-    width: calc(100% - 20px) !important;
-  }
-}
-
-
-
-/* Hover effect: light shadow for submenu items and mobile menu items */
-.submenu-servicos .submenu-item:hover,
-.mobile-menu .menu-item:hover {
-  background-color: rgba(0, 0, 0, 0.05);
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
-
-/* Touch active effect for submenu and mobile menu items */
-.submenu-servicos .submenu-item.touch-active,
-.mobile-menu .menu-item.touch-active {
-  background-color: rgba(0, 0, 0, 0.05);
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
-
-/* Estilo para Formulário Parceiro */
-.form-container {
-  margin-top: 40px;
-  padding: 20px;
-  background: #f0f0f0;
-  border-radius: 8px;
-  max-width: 800px;
-  margin-left: auto;
-  margin-right: auto;
-}
-.form-container h2 {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 1.8rem;
-  margin-bottom: 20px;
-}
-.form-container label {
-  display: block;
-  margin-top: 12px;
-  font-weight: bold;
-}
-.form-container input,
-.form-container select {
-  width: 100%;
-  padding: 8px;
-  margin-top: 4px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  background: #fff;
-}
-.form-container button {
-  margin-top: 16px;
-  padding: 10px 16px;
-  font-size: 1rem;
-  cursor: pointer;
 }
