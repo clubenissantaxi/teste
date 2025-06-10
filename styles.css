@@ -1,5 +1,3 @@
-/* 🎨 Estilo para carrossel infinito colado nas bordas */
-
 * {
   box-sizing: border-box;
 }
@@ -24,14 +22,20 @@ header img.logo {
 }
 
 @keyframes pulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.07); }
-  100% { transform: scale(1); }
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.07);
+  }
+
+  100% {
+    transform: scale(1);
+  }
 }
 
 header h1 {
-  font-family: 'Bebas Neue', cursive;  /* 🚗 Fonte com estilo de carro, original do projeto */
-
   margin: 10px 0 0;
   font-size: 2em;
   font-family: 'Bebas Neue', cursive;
@@ -40,33 +44,14 @@ header h1 {
 
 .container {
   text-align: center;
-  padding: 0;
-  margin: 0;
+  padding: 20px;
 }
 
-/* Carrossel horizontal colado nas bordas e com snapping */
 .highlights {
   display: flex;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  -webkit-overflow-scrolling: touch;
-  scroll-behavior: smooth;
-  padding: 10px 0;
-  gap: 16px;
-  width: 100vw;
-}
-
-.highlights::-webkit-scrollbar {
-  display: none;
-}
-
-/* Cada botão */
-.botao-wrapper {
-  flex: 0 0 auto;
-  scroll-snap-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
 }
 
 .highlight {
@@ -94,12 +79,32 @@ header h1 {
   object-fit: contain;
 }
 
-/* Ajustes visuais dos botões */
-.highlight.botao_serv img { width: 100%; height: 100%; }
-.highlight.botao_noticias img { width: 115%; height: 115%; }
-.highlight.botao_manual img { width: 82%; height: 82%; }
-.highlight.botao_faq img { width: 180%; height: 180%; }
-.highlight.botao_posto img { width: 100%; height: 100%; }
+/* Ajustes individuais */
+
+.highlight.botao_serv img {
+  width: 100%;
+  height: 100%;
+}
+
+.highlight.botao_noticias img {
+  width: 115%;
+  height: 115%;
+}
+
+.highlight.botao_manual img {
+  width: 82%;
+  height: 82%;
+}
+
+.highlight.botao_faq img {
+  width: 180%;
+  height: 180%;
+}
+
+.highlight.botao_posto img {
+  width: 100%;
+  height: 100%;
+}
 
 .label {
   margin-top: 6px;
@@ -109,54 +114,38 @@ header h1 {
   opacity: 0.5;
 }
 
-
-/* 🍔 Estilo do botão hamburguer */
-
-.menu-hamburguer {
-  position: absolute;
-  top: 20px;
-  right: 16px;
-  z-index: 10;
-  text-align: right;
-
+.botao-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   position: relative;
-  text-align: right;
-  padding: 0 16px;
-  margin-top: 10px;
 }
 
-.hamburguer-icon {
-  font-size: 2em;
-  cursor: pointer;
-  user-select: none;
-}
-
-/* 🔽 Submenu carrossel horizontal */
-.submenu-container {
+.mobile-menu {
   display: none;
-  flex-direction: row;
-  overflow-x: auto;
-  scroll-behavior: smooth;
-  scroll-snap-type: x mandatory;
-  background: #eee;
-  padding: 10px 5px;
-  gap: 12px;
-  border-radius: 8px;
-  margin-top: 10px;
-  white-space: nowrap;
-}
-
-.submenu-container::-webkit-scrollbar {
-  display: none;
-}
-
-.submenu-item {
-  flex: 0 0 auto;
-  scroll-snap-align: start;
+  flex-direction: column;
   background: #fff;
-  padding: 8px 16px;
-  border-radius: 20px;
-  font-family: 'Segoe UI', sans-serif;
-  font-size: 1em;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  position: absolute;
+  top: 60px;
+  right: 20px;
+  width: max-content;
+  min-width: 200px;
+  max-width: 90%;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  z-index: 999;
+  padding: 10px 0;
+  border-radius: 8px;
+}
+
+.mobile-menu .menu-item {
+  padding: 14px 20px;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.4em;
+  color: #777;
+  font-weight: bold;
+  border-bottom: 1px solid #eee;
+}
+
+.mobile-menu .menu-item:last-child {
+  border-bottom: none;
 }

@@ -1,12 +1,12 @@
-<!-- 📄 Página com carrossel infinito e responsivo -->
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
   <meta charset="utf-8" />
   <meta content="width=device-width, initial-scale=1.0" name="viewport" />
   <title>Clube Nissan Kicks Táxi</title>
   <link href="styles.css" rel="stylesheet" />
-  <!-- Firebase -->
+  <!-- Firebase SDKs -->
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
   <script>
@@ -27,69 +27,45 @@
   <header>
     <img alt="Logo" class="logo" src="imagens/logo_taxi.jpeg" />
     <h1>Clube Nissan Kicks Táxi</h1>
-  
-  <div class="menu-hamburguer">
-    <div class="hamburguer-icon" onclick="toggleSubmenu()">☰</div>
-    <div class="submenu-container" id="submenu">
-      <div class="submenu-item">Testa aqui 1</div>
-      <div class="submenu-item">Testando aqui 2</div>
-      <div class="submenu-item">Testando aqui 3</div>
-      <div class="submenu-item">Testando aqui 4</div>
-    </div>
-  </div>
-</header>
+  </header>
 
-
-  <!-- 🍔 MENU HAMBÚRGUER (mobile) -->
-  <!--REMOVER-ABAIXO-->
-<div class="menu-hamburguer">
-    <div class="hamburguer-icon" onclick="toggleSubmenu()">☰</div>
-    <div class="submenu-container" id="submenu">
-      <div class="submenu-item">Testa aqui 1</div>
-      <div class="submenu-item">Testando aqui 2</div>
-      <div class="submenu-item">Testando aqui 3</div>
-      <div class="submenu-item">Testando aqui 4</div>
-    </div>
-  </div>
-
-
-  <!-- Carrossel infinito -->
   <div class="container">
-    <div class="highlights" id="carrossel">
-      <!-- Botões originais (serão duplicados via JS para looping) -->
+    <div class="highlights">
       <div class="botao-wrapper">
         <div class="highlight botao_serv" onclick="abrirbotao_serv()">
-          <img src="imagens/botao_serv.png" alt="Serviços" />
+          <img alt="Serviços" src="imagens/botao_serv.png" />
         </div>
         <div class="label">Serviços</div>
       </div>
       <div class="botao-wrapper">
         <div class="highlight botao_noticias" onclick="abrirbotao_Noticias()">
-          <img src="imagens/botao_noticias.jpg" alt="Notícias" />
+          <img alt="Notícias" src="imagens/botao_noticias.jpg" />
         </div>
         <div class="label">Notícias</div>
       </div>
       <div class="botao-wrapper">
         <div class="highlight botao_manual" onclick="abrirbotao_Manual()">
-          <img src="imagens/botao_manual.png" alt="Manual" />
+          <img alt="Manual" src="imagens/botao_manual.png" />
         </div>
         <div class="label">Manual</div>
       </div>
       <div class="botao-wrapper">
         <div class="highlight botao_faq" onclick="abrirbotao_faq()">
-          <img src="imagens/botao_faq.png" alt="Faq" />
+          <img alt="botao_faq" src="imagens/botao_faq.png" />
         </div>
         <div class="label">Faq</div>
       </div>
       <div class="botao-wrapper">
         <div class="highlight botao_posto" onclick="abrirbotao_posto()">
-          <img src="imagens/botao_posto.png" alt="Postos Baratos" />
+          <img alt="botao_faq" src="imagens/botao_posto.png" />
         </div>
         <div class="label">Postos Baratos</div>
       </div>
+
     </div>
   </div>
 
   <script src="scripts.js"></script>
 </body>
+
 </html>
