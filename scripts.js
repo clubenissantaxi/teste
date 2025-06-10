@@ -61,3 +61,14 @@ function abrirbotao_posto() {
 }
 
 
+
+
+// 🔒 Fecha o submenu ao clicar fora do botão ou menu
+document.addEventListener('click', function(event) {
+  const submenu = document.getElementById("submenu");
+  const menuToggle = document.querySelector(".hamburguer-icon");
+
+  if (submenu && !submenu.contains(event.target) && !menuToggle.contains(event.target)) {
+    submenu.style.display = "none";
+  }
+});
