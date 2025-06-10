@@ -5,6 +5,7 @@
   <meta content="width=device-width, initial-scale=1.0" name="viewport" />
   <title>Clube Nissan Kicks Táxi</title>
   <link href="styles.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet" />
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
   <script>
@@ -20,8 +21,26 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
   </script>
+  <style>
+    .hamburger {
+      display: block !important;
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      font-size: 2rem;
+      z-index: 9999;
+      background: white;
+      border-radius: 10px;
+      padding: 8px;
+    }
+  </style>
 </head>
 <body>
+  <header>
+    <img alt="Logo" class="logo" src="imagens/logo_taxi.jpeg" />
+    <h1>Clube Nissan Kicks Táxi</h1>
+  </header>
+
   <div class="hamburger" onclick="toggleMobileMenu()">☰</div>
 
   <nav id="mobileMenu" class="mobile-menu">
@@ -31,10 +50,45 @@
   </nav>
 
   <div class="container">
-    <!-- demais seções -->
+
+    <!-- Botões visuais -->
+    <div class="highlights">
+      <div class="botao-wrapper">
+        <div class="highlight servicos"><img alt="Serviços" src="imagens/serv.png" /></div>
+        <div class="label">Serviços</div>
+      </div>
+      <div class="botao-wrapper">
+        <div class="highlight noticias"><img alt="noticias" src="imagens/noticias.jpg" /></div>
+        <div class="label">Notícias</div>
+      </div>
+      <div class="botao-wrapper">
+        <div class="highlight manual"><img alt="Manual" src="imagens/manual.png" /></div>
+        <div class="label">Manual</div>
+      </div>
+      <div class="botao-wrapper">
+        <div class="highlight faq" onclick="mostrarFAQ()"><img alt="FAQ" src="imagens/botao_faq.png" /></div>
+        <div class="label">FAQ</div>
+      </div>
+    </div>
+
+    <!-- Iframe da Área ADM -->
     <div id="container-area-adm" class="form-container" style="display:none;">
       <iframe id="frame-adm" src="" width="100%" height="600" style="border:none;"></iframe>
     </div>
+
+    <!-- Containers de outras seções -->
+    <div id="faq-container" style="display:none; margin: 20px;">
+      <iframe height="800" id="faq-frame" src="acessofaq.html" style="border:none;" width="100%"></iframe>
+    </div>
+
+    <div id="noticias-container" class="noticias-container" style="display: none;">
+      <h2 class="noticias-titulo">📢 Últimas Notícias</h2>
+      <div class="noticia">
+        <div class="noticia-data">08/06/2025 10:00</div>
+        <div class="noticia-texto">Início do projeto do menu mobile concluído com sucesso.</div>
+      </div>
+    </div>
+
   </div>
 
   <script>
@@ -46,9 +100,11 @@
     function abrirAreaAdm() {
       const senhaDigitada = prompt('Digite a senha da Área ADM:');
       if (!senhaDigitada) return;
+
       firebase.database().ref('senhas/adm').once('value', snap => {
         if (snap.val() === senhaDigitada) {
-          document.querySelectorAll('.servicos-container, .noticias-container, #faq-container').forEach(el => el.style.display = 'none');
+          document.querySelectorAll('.servicos-container, .noticias-container, #faq-container, .form-container')
+            .forEach(el => el.style.display = 'none');
           const frame = document.getElementById("frame-adm");
           frame.src = "paginas/area-adm.html";
           document.getElementById("container-area-adm").style.display = "block";
@@ -56,6 +112,14 @@
           alert("❌ Senha incorreta.");
         }
       });
+    }
+
+    function mostrarFAQ() {
+      document.querySelectorAll('.servicos-container, .noticias-container, .form-container')
+        .forEach(el => el.style.display = 'none');
+      const iframe = document.getElementById("faq-frame");
+      iframe.src = "acessofaq.html";
+      document.getElementById("faq-container").style.display = 'block';
     }
   </script>
 </body>
