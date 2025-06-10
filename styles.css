@@ -9,6 +9,7 @@ body {
 }
 
 header {
+  position: relative;
   text-align: center;
   padding: 20px;
   background-color: #fff;
