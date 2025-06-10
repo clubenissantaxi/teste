@@ -38,3 +38,10 @@ function abrirbotao_Noticias() { loadPage("paginas/noticias.html"); }
 function abrirbotao_Manual() { loadPage("paginas/manual.html"); }
 function abrirbotao_faq() { loadPage("paginas/faq.html"); }
 function abrirbotao_posto() { loadPage("paginas/posto.html"); }
+
+
+// 🍔 Alternar visibilidade do submenu carrossel ao clicar no hamburguer
+function toggleSubmenu() {
+  const submenu = document.getElementById("submenu");
+  submenu.style.display = submenu.style.display === "flex" ? "none" : "flex";
+}
