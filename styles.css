@@ -150,3 +150,47 @@ header h1 {
 .mobile-menu .menu-item:last-child {
   border-bottom: none;
 }
+
+
+/* 🍔 Estilo para o botão de menu hambúrguer no header */
+.menu-hamburguer {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.hamburguer-icon {
+  font-size: 2em;
+  cursor: pointer;
+  user-select: none;
+}
+
+/* 📋 Submenu em lista vertical, logo abaixo do botão */
+.submenu-container {
+  display: none;
+  position: absolute;
+  top: 48px;
+  right: 0;
+  background: #eee;
+  padding: 8px 0;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  min-width: 160px;
+  flex-direction: column;
+  gap: 6px;
+  z-index: 999;
+}
+
+.submenu-item {
+  padding: 8px 16px;
+  background: #fff;
+  border-radius: 6px;
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 1em;
+  white-space: nowrap;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
