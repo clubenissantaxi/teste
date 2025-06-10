@@ -64,11 +64,40 @@ function abrirbotao_posto() {
 
 
 // 🔒 Fecha o submenu ao clicar fora do botão ou menu
-document.addEventListener('click', function(event) {
+document.addEventListener('click', function (event) {
   const submenu = document.getElementById("submenu");
   const menuToggle = document.querySelector(".hamburguer-icon");
 
   if (submenu && !submenu.contains(event.target) && !menuToggle.contains(event.target)) {
+    submenu.style.display = "none";
+  }
+});
+
+// ❌ Fecha iframe se clicar fora dele e dos botões principais
+document.addEventListener('click', function (event) {
+  const iframeContainer = document.getElementById("dynamic-frame-container");
+  const clickedHighlight = event.target.closest(".highlight");
+
+  if (iframeContainer && !iframeContainer.contains(event.target) && !clickedHighlight) {
+    iframeContainer.remove();
+  }
+});
+// ✅ NOVO TOGGLE do submenu
+function toggleSubmenu() {
+  const submenu = document.getElementById("novoSubmenu");
+  submenu.style.display = submenu.style.display === "flex" ? "none" : "flex";
+}
+
+// ✅ Fecha o submenu ao clicar fora
+document.addEventListener("click", function (event) {
+  const submenu = document.getElementById("novoSubmenu");
+  const menuToggle = document.querySelector(".hamburguer-icon");
+
+  if (
+    submenu &&
+    !submenu.contains(event.target) &&
+    !menuToggle.contains(event.target)
+  ) {
     submenu.style.display = "none";
   }
 });
