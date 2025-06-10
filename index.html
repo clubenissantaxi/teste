@@ -1,18 +1,15 @@
-<!-- 📄 Arquivo HTML principal da página -->
+<!-- 📄 Página com carrossel infinito e responsivo -->
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-  <!-- 🧠 Cabeçalho com metadados e links -->
   <meta charset="utf-8" />
   <meta content="width=device-width, initial-scale=1.0" name="viewport" />
   <title>Clube Nissan Kicks Táxi</title>
   <link href="styles.css" rel="stylesheet" />
-
-  <!-- 🔧 Firebase SDKs -->
+  <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
   <script>
-    // 🔐 Configurações do Firebase
     const firebaseConfig = {
       apiKey: "AIzaSyBfBqOOcOmog_6V9ZUxc02PtVYv2Z64mEQ",
       authDomain: "autofaq-c0c21.firebaseapp.com",
@@ -22,67 +19,53 @@
       messagingSenderId: "174442660737",
       appId: "1:174442660737:web:2c2405b7bc3439c10a1e80"
     };
-    firebase.initializeApp(firebaseConfig); // 🚀 Inicializa Firebase
+    firebase.initializeApp(firebaseConfig);
   </script>
 </head>
 
 <body>
-  <!-- 🧢 Cabeçalho com logo e título -->
   <header>
     <img alt="Logo" class="logo" src="imagens/logo_taxi.jpeg" />
     <h1>Clube Nissan Kicks Táxi</h1>
   </header>
 
-  <!-- 📦 Container principal -->
+  <!-- Carrossel infinito -->
   <div class="container">
-
-    <!-- 🔄 EFEITO CARROSSEL HORIZONTAL: área de botões com rolagem lateral -->
-    <div class="carrossel-container">
-      <div class="scroll-button left" onclick="scrollButtons(-1)">&#8249;</div> <!-- ◀️ Seta esquerda -->
-
-      <div class="highlights" id="carrossel">
-        <!-- Cada botão é envolvido por um wrapper com imagem e legenda -->
-        <div class="botao-wrapper">
-          <div class="highlight botao_serv" onclick="abrirbotao_serv()">
-            <img alt="Serviços" src="imagens/botao_serv.png" />
-          </div>
-          <div class="label">Serviços</div>
+    <div class="highlights" id="carrossel">
+      <!-- Botões originais (serão duplicados via JS para looping) -->
+      <div class="botao-wrapper">
+        <div class="highlight botao_serv" onclick="abrirbotao_serv()">
+          <img src="imagens/botao_serv.png" alt="Serviços" />
         </div>
-
-        <div class="botao-wrapper">
-          <div class="highlight botao_noticias" onclick="abrirbotao_Noticias()">
-            <img alt="Notícias" src="imagens/botao_noticias.jpg" />
-          </div>
-          <div class="label">Notícias</div>
-        </div>
-
-        <div class="botao-wrapper">
-          <div class="highlight botao_manual" onclick="abrirbotao_Manual()">
-            <img alt="Manual" src="imagens/botao_manual.png" />
-          </div>
-          <div class="label">Manual</div>
-        </div>
-
-        <div class="botao-wrapper">
-          <div class="highlight botao_faq" onclick="abrirbotao_faq()">
-            <img alt="Faq" src="imagens/botao_faq.png" />
-          </div>
-          <div class="label">Faq</div>
-        </div>
-
-        <div class="botao-wrapper">
-          <div class="highlight botao_posto" onclick="abrirbotao_posto()">
-            <img alt="Postos Baratos" src="imagens/botao_posto.png" />
-          </div>
-          <div class="label">Postos Baratos</div>
-        </div>
+        <div class="label">Serviços</div>
       </div>
-
-      <div class="scroll-button right" onclick="scrollButtons(1)">&#8250;</div> <!-- ▶️ Seta direita -->
+      <div class="botao-wrapper">
+        <div class="highlight botao_noticias" onclick="abrirbotao_Noticias()">
+          <img src="imagens/botao_noticias.jpg" alt="Notícias" />
+        </div>
+        <div class="label">Notícias</div>
+      </div>
+      <div class="botao-wrapper">
+        <div class="highlight botao_manual" onclick="abrirbotao_Manual()">
+          <img src="imagens/botao_manual.png" alt="Manual" />
+        </div>
+        <div class="label">Manual</div>
+      </div>
+      <div class="botao-wrapper">
+        <div class="highlight botao_faq" onclick="abrirbotao_faq()">
+          <img src="imagens/botao_faq.png" alt="Faq" />
+        </div>
+        <div class="label">Faq</div>
+      </div>
+      <div class="botao-wrapper">
+        <div class="highlight botao_posto" onclick="abrirbotao_posto()">
+          <img src="imagens/botao_posto.png" alt="Postos Baratos" />
+        </div>
+        <div class="label">Postos Baratos</div>
+      </div>
     </div>
   </div>
 
-  <!-- 📜 Scripts principais -->
   <script src="scripts.js"></script>
 </body>
 </html>

@@ -1,4 +1,4 @@
-/* 🎨 Estilos principais do site */
+/* 🎨 Estilo para carrossel infinito colado nas bordas */
 
 * {
   box-sizing: border-box;
@@ -38,27 +38,35 @@ header h1 {
 
 .container {
   text-align: center;
-  padding: 20px;
+  padding: 0;
+  margin: 0;
 }
 
-/* 🔄 Estilo do carrossel horizontal */
-.carrossel-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-}
-
+/* Carrossel horizontal colado nas bordas e com snapping */
 .highlights {
   display: flex;
   overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
   scroll-behavior: smooth;
   padding: 10px 0;
-  gap: 20px;
-  max-width: 90vw;
+  gap: 16px;
+  width: 100vw;
 }
 
-/* Estilo dos botões visuais */
+.highlights::-webkit-scrollbar {
+  display: none;
+}
+
+/* Cada botão */
+.botao-wrapper {
+  flex: 0 0 auto;
+  scroll-snap-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 .highlight {
   width: 90px;
   height: 90px;
@@ -84,39 +92,17 @@ header h1 {
   object-fit: contain;
 }
 
-/* Tamanhos personalizados para ícones */
+/* Ajustes visuais dos botões */
 .highlight.botao_serv img { width: 100%; height: 100%; }
 .highlight.botao_noticias img { width: 115%; height: 115%; }
 .highlight.botao_manual img { width: 82%; height: 82%; }
 .highlight.botao_faq img { width: 180%; height: 180%; }
 .highlight.botao_posto img { width: 100%; height: 100%; }
 
-/* Legenda abaixo dos botões */
 .label {
   margin-top: 6px;
   font-family: 'Bebas Neue', sans-serif;
   font-size: 1.3em;
   color: #333;
   opacity: 0.5;
-}
-
-/* Estrutura de cada botão com imagem + legenda */
-.botao-wrapper {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  position: relative;
-}
-
-/* ◀️▶️ Estilo das setas laterais */
-.scroll-button {
-  font-size: 2em;
-  color: #555;
-  cursor: pointer;
-  user-select: none;
-  padding: 10px;
-  background: rgba(255,255,255,0.9);
-  border-radius: 50%;
-  box-shadow: 0 0 5px rgba(0,0,0,0.2);
-  z-index: 1;
 }
