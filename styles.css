@@ -59,8 +59,12 @@ header h1 {
   scroll-snap-type: x mandatory;
   -webkit-overflow-scrolling: touch;
   gap: 20px;
-  padding: 10px 0;
-  width: 100vw;
+  padding: 10px 16px;
+  /* ✅ margens esquerda e direita iguais */
+  width: 100%;
+  /* ✅ evita ultrapassar a largura da tela */
+  box-sizing: border-box;
+  /* ✅ padding faz parte do cálculo da largura */
 }
 
 .highlights::-webkit-scrollbar {
