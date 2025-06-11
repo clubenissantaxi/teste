@@ -5,10 +5,9 @@
   <meta charset="utf-8" />
   <meta content="width=device-width, initial-scale=1.0" name="viewport" />
   <title>Clube Nissan Kicks Táxi</title>
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
-
   <link href="styles.css" rel="stylesheet" />
-  <!-- Firebase SDKs -->
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
   <script>
@@ -27,10 +26,8 @@
 
 <body>
   <header>
-    <img alt="Logo" class="logo" src="imagens/logo_taxi.jpeg" />
+    <img alt="Logo" class="logo" src="imagens/logo_taxi.webp" />
     <h1>Clube Nissan Kicks Táxi</h1>
-
-    <!-- 🍔 MENU HAMBÚRGUER NO TOPO DIREITO -->
     <div class="menu-hamburguer">
       <div class="hamburguer-icon" onclick="toggleSubmenu()">☰</div>
       <div class="novo-submenu" id="novoSubmenu">
@@ -40,45 +37,52 @@
         <div class="novo-submenu-item">Contato</div>
       </div>
     </div>
-
   </header>
 
   <div class="container">
     <div class="highlights">
       <div class="botao-wrapper">
-        <div class="highlight botao_serv" onclick="abrirbotao_serv()">
-          <img alt="Serviços" src="imagens/botao_serv.png" />
+        <div class="highlight botao_serv" onclick="abrirbotao_serv(event)">
+          <img alt="Serviços" src="imagens/botao_serv.webp" />
         </div>
         <div class="label">Serviços</div>
       </div>
+      <!-- Submenu para Serviços -->
+      <div class="submenu-servicos" id="submenuServicos">
+        <div class="novo-submenu-item">Opção 1</div>
+        <div class="novo-submenu-item">Opção 2</div>
+        <div class="novo-submenu-item">Opção 3</div>
+        <div class="novo-submenu-item">Opção 4</div>
+        <div class="novo-submenu-item">Opção 5</div>
+        <div class="novo-submenu-item">Opção 6</div>
+      </div>
+
       <div class="botao-wrapper">
         <div class="highlight botao_noticias" onclick="abrirbotao_Noticias()">
-          <img alt="Notícias" src="imagens/botao_noticias.jpg" />
+          <img alt="Notícias" src="imagens/botao_noticias.webp" />
         </div>
         <div class="label">Notícias</div>
       </div>
       <div class="botao-wrapper">
         <div class="highlight botao_manual" onclick="abrirbotao_Manual()">
-          <img alt="Manual" src="imagens/botao_manual.png" />
+          <img alt="Manual" src="imagens/botao_manual.webp" />
         </div>
         <div class="label">Manual</div>
       </div>
       <div class="botao-wrapper">
         <div class="highlight botao_faq" onclick="abrirbotao_faq()">
-          <img alt="botao_faq" src="imagens/botao_faq.png" />
+          <img alt="botao_faq" src="imagens/botao_faq.webp" />
         </div>
         <div class="label">Faq</div>
       </div>
       <div class="botao-wrapper">
         <div class="highlight botao_posto" onclick="abrirbotao_posto()">
-          <img alt="botao_faq" src="imagens/botao_posto.png" />
+          <img alt="botao_faq" src="imagens/botao_posto.webp" />
         </div>
-        <div class="label">Postos Baratos</div>
+        <div class="label">Postos/Preço</div>
       </div>
-
     </div>
   </div>
-
   <script src="scripts.js"></script>
 </body>
 

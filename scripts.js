@@ -101,3 +101,26 @@ document.addEventListener("click", function (event) {
     submenu.style.display = "none";
   }
 });
+
+function toggleSubmenuServicos(event) {
+  event.stopPropagation();
+  const submenu = document.getElementById("submenuServicos");
+  submenu.style.display = submenu.style.display === "flex" ? "none" : "flex";
+}
+
+function abrirbotao_serv(event) {
+  toggleSubmenuServicos(event);
+}
+
+document.addEventListener("click", function (event) {
+  const submenu = document.getElementById("submenuServicos");
+  const botaoServicos = document.querySelector(".botao_serv");
+
+  if (
+    submenu &&
+    !submenu.contains(event.target) &&
+    !botaoServicos.contains(event.target)
+  ) {
+    submenu.style.display = "none";
+  }
+});
