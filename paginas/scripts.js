@@ -1,15 +1,11 @@
 
-// 🍔 Alterna visibilidade do submenu ao clicar no botão hamburguer
+// 🍔 Alterna visibilidade do submenu hamburguer
 function toggleSubmenu() {
-  const submenu = document.getElementById("submenu");
+  const submenu = document.getElementById("novoSubmenu");
   submenu.style.display = submenu.style.display === "flex" ? "none" : "flex";
 }
 
-function toggleMobileMenu() {
-  const menu = document.getElementById("mobileMenu");
-  menu.style.display = menu.style.display === "flex" ? "none" : "flex";
-}
-
+// Carrega páginas via iframe
 function loadPage(url) {
   const old = document.getElementById("dynamic-frame-container");
   if (old) old.remove();
@@ -35,65 +31,63 @@ function loadPage(url) {
   highlights.parentNode.insertBefore(container, highlights.nextSibling);
 }
 
+// Abre o submenu Serviços
 function abrirbotao_serv(event) {
-  toggleSubmenuServicos(event);
-}
-
-function abrirbotao_Noticias() {
-  loadPage("paginas/noticias.html");
-}
-
-function abrirbotao_Manual() {
-  window.open("https://www.nissan.com.br/servicos/manuais/kicks.html", "_blank");
-}
-
-function abrirbotao_faq() {
-  loadPage("paginas/faq.html");
-}
-
-function abrirbotao_posto() {
-  loadPage("paginas/posto.html");
-}
-
-document.addEventListener("click", function (event) {
-  const submenu = document.getElementById("submenu");
-  const menuToggle = document.querySelector(".hamburguer-icon");
-  if (submenu && !submenu.contains(event.target) && !menuToggle.contains(event.target)) {
-    submenu.style.display = "none";
-  }
-});
-
-document.addEventListener("click", function (event) {
-  const iframeContainer = document.getElementById("dynamic-frame-container");
-  const clickedHighlight = event.target.closest(".highlight");
-  if (iframeContainer && !iframeContainer.contains(event.target) && !clickedHighlight) {
-    iframeContainer.remove();
-  }
-});
-
-function toggleSubmenu() {
-  const submenu = document.getElementById("novoSubmenu");
-  submenu.style.display = submenu.style.display === "flex" ? "none" : "flex";
-}
-
-document.addEventListener("click", function (event) {
-  const submenu = document.getElementById("novoSubmenu");
-  const menuToggle = document.querySelector(".hamburguer-icon");
-  if (submenu && !submenu.contains(event.target) && !menuToggle.contains(event.target)) {
-    submenu.style.display = "none";
-  }
-});
-
-function toggleSubmenuServicos(event) {
   event.stopPropagation();
   const submenu = document.getElementById("submenuServicos");
   submenu.style.display = submenu.style.display === "flex" ? "none" : "flex";
 }
 
-document.addEventListener("click", function (event) {
-  const submenu = document.getElementById("submenuServicos");
-  const botaoServicos = document.querySelector(".botao_serv");
-  if (submenu && !submenu.contains(event.target) && !botaoServicos.contains(event.target)) {
-    submenu.style.display = "none";
+// Carrega página Notícias
+function abrirbotao_Noticias() {
+  loadPage("paginas/noticias.html");
+}
+
+// Abre link Manual em nova aba
+function abrirbotao_Manual() {
+  window.open("https://www.nissan.com.br/servicos/manuais/kicks.html", "_blank");
+}
+
+// Carrega página FAQ
+function abrirbotao_faq() {
+  loadPage("paginas/faq.html");
+}
+
+// Carrega página Posto
+function abrirbotao_posto() {
+  loadPage("paginas/posto.html");
+}
+
+// Abre página Troca de óleo via iframe (submenu)
+function abrirSubmenuGoogle(event) {
+  event.stopPropagation();
+  loadPage("paginas/troca-oleo.html");
+}
+
+// Listener global refinado substituindo múltiplos listeners
+document.addEventListener("click", function(event) {
+  // 1️⃣ Fecha menu hamburguer
+  const menu = document.getElementById("novoSubmenu");
+  if (menu && !event.target.closest(".menu-hamburguer")) {
+    menu.style.display = "none";
   }
+
+  // 2️⃣ Fecha submenu Serviços
+  const serv = document.getElementById("submenuServicos");
+  if (
+    serv &&
+    !event.target.closest(".botao_serv") &&
+    !event.target.closest("#submenuServicos")
+  ) {
+    serv.style.display = "none";
+  }
+
+  // 3️⃣ Remove iframe se clicar fora de highlights ou do próprio iframe
 });
+
+
+// Abre página Capas de Banco (submenu Opção 2)
+function abrir_submenu_servico_capasbanco(event) {
+  event.stopPropagation();
+  loadPage("paginas/capas-banco.html");
+}
