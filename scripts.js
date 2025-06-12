@@ -1,22 +1,15 @@
-// 🍔 Alterna visibilidade do submenu ao clicar no botão hamburguer
+
+// 🍔 Alterna visibilidade do submenu hamburguer
 function toggleSubmenu() {
-  const submenu = document.getElementById("submenu");
+  const submenu = document.getElementById("novoSubmenu");
   submenu.style.display = submenu.style.display === "flex" ? "none" : "flex";
 }
 
-// Toggle mobile menu
-function toggleMobileMenu() {
-  const menu = document.getElementById("mobileMenu");
-  menu.style.display = menu.style.display === "flex" ? "none" : "flex";
-}
-
-// Load a page in dynamic iframe below highlights
+// Carrega páginas via iframe
 function loadPage(url) {
-  // Remove existing iframe container
   const old = document.getElementById("dynamic-frame-container");
   if (old) old.remove();
 
-  // Create container
   const container = document.createElement("div");
   container.id = "dynamic-frame-container";
   container.style.width = "100%";
@@ -26,7 +19,6 @@ function loadPage(url) {
   container.style.overflow = "hidden";
   container.style.boxShadow = "0 0 10px rgba(0,0,0,0.1)";
 
-  // Create iframe
   const iframe = document.createElement("iframe");
   iframe.src = url;
   iframe.width = "100%";
@@ -35,92 +27,75 @@ function loadPage(url) {
   iframe.style.display = "block";
 
   container.appendChild(iframe);
-
-  // Insert after highlights
   const highlights = document.querySelector(".highlights");
   highlights.parentNode.insertBefore(container, highlights.nextSibling);
 }
 
-// Specific loaders 
-function abrirbotao_serv() {//
-  loadPage("paginas/servicos.html");
-}
-
-function abrirbotao_Noticias() {
-  loadPage("paginas/noticias.html");
-}
-
-function abrirbotao_Manual() {
-  loadPage("paginas/manual.html");
-}
-function abrirbotao_faq() {
-  loadPage("paginas/faq.html");
-}
-function abrirbotao_posto() {
-  loadPage("paginas/posto.html");
-}
-
-
-
-
-// 🔒 Fecha o submenu ao clicar fora do botão ou menu
-document.addEventListener('click', function (event) {
-  const submenu = document.getElementById("submenu");
-  const menuToggle = document.querySelector(".hamburguer-icon");
-
-  if (submenu && !submenu.contains(event.target) && !menuToggle.contains(event.target)) {
-    submenu.style.display = "none";
-  }
-});
-
-// ❌ Fecha iframe se clicar fora dele e dos botões principais
-document.addEventListener('click', function (event) {
-  const iframeContainer = document.getElementById("dynamic-frame-container");
-  const clickedHighlight = event.target.closest(".highlight");
-
-  if (iframeContainer && !iframeContainer.contains(event.target) && !clickedHighlight) {
-    iframeContainer.remove();
-  }
-});
-// ✅ NOVO TOGGLE do submenu
-function toggleSubmenu() {
-  const submenu = document.getElementById("novoSubmenu");
-  submenu.style.display = submenu.style.display === "flex" ? "none" : "flex";
-}
-
-// ✅ Fecha o submenu ao clicar fora
-document.addEventListener("click", function (event) {
-  const submenu = document.getElementById("novoSubmenu");
-  const menuToggle = document.querySelector(".hamburguer-icon");
-
-  if (
-    submenu &&
-    !submenu.contains(event.target) &&
-    !menuToggle.contains(event.target)
-  ) {
-    submenu.style.display = "none";
-  }
-});
-
-function toggleSubmenuServicos(event) {
+// Abre o submenu Serviços
+function abrirbotao_serv(event) {
   event.stopPropagation();
   const submenu = document.getElementById("submenuServicos");
   submenu.style.display = submenu.style.display === "flex" ? "none" : "flex";
 }
 
-function abrirbotao_serv(event) {
-  toggleSubmenuServicos(event);
+// Carrega página Notícias
+function abrirbotao_Noticias() {
+  loadPage("paginas/noticias.html");
 }
 
-document.addEventListener("click", function (event) {
-  const submenu = document.getElementById("submenuServicos");
-  const botaoServicos = document.querySelector(".botao_serv");
+// Abre link Manual em nova aba
+function abrirbotao_Manual() {
+  window.open("https://www.nissan.com.br/servicos/manuais/kicks.html", "_blank");
+}
 
+// Carrega página FAQ
+function abrirbotao_faq() {
+  loadPage("paginas/faq.html");
+}
+
+// Carrega página Posto
+function abrirbotao_posto() {
+  loadPage("paginas/posto.html");
+}
+
+// Abre página Troca de óleo via iframe (submenu)
+function abrirSubmenuGoogle(event) {
+  event.stopPropagation();
+  loadPage("paginas/troca-oleo.html");
+}
+
+// Listener global refinado substituindo múltiplos listeners
+document.addEventListener("click", function(event) {
+  // 1️⃣ Fecha menu hamburguer
+  const menu = document.getElementById("novoSubmenu");
+  if (menu && !event.target.closest(".menu-hamburguer")) {
+    menu.style.display = "none";
+  }
+
+  // 2️⃣ Fecha submenu Serviços
+  const serv = document.getElementById("submenuServicos");
   if (
-    submenu &&
-    !submenu.contains(event.target) &&
-    !botaoServicos.contains(event.target)
+    serv &&
+    !event.target.closest(".botao_serv") &&
+    !event.target.closest("#submenuServicos")
   ) {
-    submenu.style.display = "none";
+    serv.style.display = "none";
+  }
+
+  // 3️⃣ Remove iframe se clicar fora de highlights ou do próprio iframe
+  const iframeC = document.getElementById("dynamic-frame-container");
+  if (
+    iframeC &&
+    !event.target.closest(".highlights") &&
+    !event.target.closest("#dynamic-frame-container")
+  ) {
+    iframeC.remove();
   }
 });
+
+
+// Abre página Capas de Banco (submenu Opção 2)
+function abrir_submenu_servico_capasbanco(event) {
+  event.stopPropagation();
+  loadPage("paginas/capas-banco.html");
+}
