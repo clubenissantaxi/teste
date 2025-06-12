@@ -252,13 +252,14 @@ header h1 {
   backdrop-filter: blur(12px);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
   border-radius: 12px;
-  padding: 12px 0;
+  padding: 10px 0;
   z-index: 999;
   animation: fadeInSubmenu 0.25s ease-out;
-  min-width: 200px;
+  min-width: 150px;
+  /* espaço do fundo submenu*/
 
-  top: 38%;
-  /* ⬇️ Logo abaixo do botão */
+  top: 58%;
+  /* ⬇️ movimentar submenu Logo abaixo do botão */
   left: 1%;
   /* ⬅️ Centralizado horizontalmente */
 }
