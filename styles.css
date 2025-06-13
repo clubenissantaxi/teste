@@ -40,10 +40,12 @@ header h1 {
   margin: 10px 0 0;
   font-size: 2em;
   font-family: 'Rajdhani', sans-serif;
+  /* ✅ Fonte moderna e reta */
   font-weight: 700;
   color: #333;
   letter-spacing: 1px;
 }
+
 
 .container {
   text-align: center;
@@ -58,16 +60,11 @@ header h1 {
   -webkit-overflow-scrolling: touch;
   gap: 20px;
   padding: 10px 16px;
+  /* ✅ margens esquerda e direita iguais */
   width: 100%;
+  /* ✅ evita ultrapassar a largura da tela */
   box-sizing: border-box;
-  position: relative;
-}
-
-/* 👁️ SUGESTÃO INTUITIVA - Mostra parte do último botão */
-.highlights::after {
-  content: "";
-  flex: 0 0 40px;
-  /* espaço no final para "cortar" último botão */
+  /* ✅ padding faz parte do cálculo da largura */
 }
 
 .highlights::-webkit-scrollbar {
@@ -75,8 +72,8 @@ header h1 {
 }
 
 .highlight {
-  width: 65px;
-  height: 65px;
+  width: 90px;
+  height: 90px;
   border-radius: 50%;
   background-color: #ddd;
   border: 3px solid rgba(200, 200, 200, 0.3);
@@ -100,6 +97,7 @@ header h1 {
 }
 
 /* Ajustes individuais */
+
 .highlight.botao_serv img {
   width: 100%;
   height: 100%;
@@ -140,7 +138,6 @@ header h1 {
   position: relative;
 }
 
-/* 🍔 Submenu hamburguer */
 .mobile-menu {
   display: none;
   flex-direction: column;
@@ -170,6 +167,8 @@ header h1 {
   border-bottom: none;
 }
 
+
+/* 🍔 Estilo para o botão de menu hambúrguer no header */
 .menu-hamburguer {
   position: absolute;
   top: 16px;
@@ -186,14 +185,20 @@ header h1 {
   user-select: none;
   font-family: 'Bebas Neue', sans-serif;
   color: #333;
+
+  font-size: 2em;
+  cursor: pointer;
+  user-select: none;
 }
 
-/* ✅ Submenu moderno - hamburguer */
+/* 📋 Submenu em lista vertical, logo abaixo do botão */
+/* ✅ NOVO SUBMENU MODERNO */
 .novo-submenu {
   display: none;
   flex-direction: column;
   position: absolute;
   top: 58px;
+  /*mover submenu hamburguer*/
   right: -5px;
   min-width: 180px;
   background: rgba(255, 255, 255, 0.95);
@@ -235,6 +240,11 @@ header h1 {
 }
 
 /* 📦 Submenu do botão Serviços */
+.botao-wrapper {
+  position: relative;
+}
+
+/* 📦 Submenu do botão Serviços - POSICIONAMENTO ABAIXO DO BOTÃO */
 .submenu-servicos {
   position: absolute;
   display: none;
@@ -247,6 +257,28 @@ header h1 {
   z-index: 999;
   animation: fadeInSubmenu 0.25s ease-out;
   min-width: 150px;
+  /* espaço do fundo submenu*/
+
   top: 50%;
+  /* ⬇️ movimentar submenu Logo abaixo do botão */
   left: 1%;
+  /* ⬅️ Centralizado horizontalmente */
+
+  position: absolute;
+  display: none;
+  flex-direction: column;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  border-radius: 12px;
+  padding: 10px 0;
+  z-index: 9999;
+  animation: fadeInSubmenu 0.25s ease-out;
+  min-width: 150px;
+  /* espaço do fundo submenu*/
+
+  top: 50%;
+  /* ⬇️ movimentar submenu Logo abaixo do botão */
+  left: 1%;
+  /* ⬅️ Centralizado horizontalmente */
 }
