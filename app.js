@@ -31,89 +31,58 @@ function initializeMap(elementId, center = [-23.5505, -46.6333]) {
   return map;
 }
 
-// ========== TAXISTA ==========
-function initializeDriver() {
-  const map = initializeMap('map');
-  let marker = null;
-  let watchId = null;
-  let driverId = 'driver_' + Math.random().toString(36).substr(2, 9);
-  let isActive = false;
-
-  const status = document.getElementById('status');
-  const toggleButton = document.getElementById('toggle-active');
-
-  toggleButton.addEventListener('click', () => {
-    isActive = !isActive;
-    toggleButton.textContent = isActive ? 'Desativar Localização' : 'Ativar Localização';
-    toggleButton.classList.toggle('bg-blue-500', !isActive);
-    toggleButton.classList.toggle('bg-red-500', isActive);
-
-    if (isActive) {
-      watchId = navigator.geolocation.watchPosition(
-        (position) => {
-          const { latitude, longitude } = position.coords;
-          status.textContent = `Localização: ${latitude.toFixed(4)}, ${longitude.toFixed(4)}`;
-          console.log(`Motorista ${driverId} atualizado: ${latitude}, ${longitude}`);
-          if (marker) {
-            marker.setLatLng([latitude, longitude]);
-          } else {
-            marker = L.marker([latitude, longitude]).addTo(map).bindPopup('Você está aqui!');
-          }
-          map.setView([latitude, longitude], 13);
-
-          db.ref('drivers/' + driverId).set({
-            latitude,
-            longitude,
-            active: true,
-            timestamp: Date.now()
-          });
-        },
-        (error) => {
-          status.textContent = 'Erro ao obter localização: ' + error.message;
-          console.error('Erro na geolocalização:', error);
-        },
-        { enableHighAccuracy: true }
-      );
-    } else {
-      if (watchId) navigator.geolocation.clearWatch(watchId);
-      watchId = null;
-      status.textContent = 'Localização desativada';
-      if (marker) map.removeLayer(marker);
-      db.ref('drivers/' + driverId).remove();
-    }
-  });
-}
-
-// ========== PASSAGEIRO ==========
+// === PASSAGEIRO ===
 function initializePassenger() {
   const map = initializeMap('map');
   let passengerMarker = null;
   let driverMarkers = {};
-  let selectedDriverId = null;
   let confirmedLocation = null;
 
   const status = document.getElementById('status');
+  const addressInput = document.getElementById('address-input');
+  const locationConfirmation = document.getElementById('location-confirmation');
+  const okButton = document.getElementById('ok-button');
   const driversList = document.getElementById('drivers-list');
   const callDriverButton = document.getElementById('call-driver');
-  const confirmButton = document.getElementById('confirm-location');
 
   navigator.geolocation.getCurrentPosition(
-    (position) => {
+    async (position) => {
       const { latitude, longitude } = position.coords;
       map.setView([latitude, longitude], 15);
 
       passengerMarker = L.marker([latitude, longitude], { draggable: true })
         .addTo(map)
-        .bindPopup('Arraste para ajustar seu local')
+        .bindPopup('Ajuste sua localização')
         .openPopup();
 
-      confirmButton.classList.remove('hidden');
+      // Mostrar campo de endereço
+      locationConfirmation.classList.remove('hidden');
 
-      confirmButton.addEventListener('click', () => {
+      // Obter endereço automático via Nominatim
+      try {
+        const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&accept-language=pt-BR`;
+        const response = await fetch(url);
+        const data = await response.json();
+        if (data.display_name) {
+          addressInput.value = data.display_name;
+        }
+      } catch (error) {
+        console.error('Erro ao buscar endereço:', error);
+      }
+
+      okButton.addEventListener('click', () => {
         const pos = passengerMarker.getLatLng();
-        confirmedLocation = { lat: pos.lat, lng: pos.lng };
-        passengerMarker.bindPopup('Local confirmado!').openPopup();
-        confirmButton.disabled = true;
+        const enderecoDigitado = addressInput.value.trim();
+        if (!enderecoDigitado) {
+          alert("Por favor, digite um endereço válido.");
+          return;
+        }
+
+        confirmedLocation = { lat: pos.lat, lng: pos.lng, endereco: enderecoDigitado };
+        passengerMarker.bindPopup(`Endereço confirmado:<br>${enderecoDigitado}`).openPopup();
+        okButton.disabled = true;
+        addressInput.disabled = true;
+
         buscarTaxistas(confirmedLocation.lat, confirmedLocation.lng);
       });
     },
@@ -155,5 +124,5 @@ function initializePassenger() {
 
 function solicitarCorrida(driverId) {
   alert('Solicitação enviada ao taxista ' + driverId.slice(-4));
-  // Em breve: enviar dados para o Firebase aqui
+  // Aqui futuramente enviaremos para Firebase
 }
