@@ -1,12 +1,11 @@
 const firebaseConfig = {
-  // Substitua pelo seu objeto de configuração do Firebase
-  apiKey: "SUA_API_KEY",
-  authDomain: "SEU_PROJETO.firebaseapp.com",
-  databaseURL: "https://SEU_PROJETO-default-rtdb.firebaseio.com",
-  projectId: "SEU_PROJETO",
-  storageBucket: "SEU_PROJETO.appspot.com",
-  messagingSenderId: "SEU_SENDER_ID",
-  appId: "SEU_APP_ID"
+  apiKey: "AIzaSyBfBqOOcOmog_6V9ZUxc02PtVYv2Z64mEQ",
+  authDomain: "autofaq-c0c21.firebaseapp.com",
+  databaseURL: "https://autofaq-c0c21-default-rtdb.firebaseio.com",
+  projectId: "autofaq-c0c21",
+  storageBucket: "autofaq-c0c21.appspot.com",
+  messagingSenderId: "174442660737",
+  appId: "1:174442660737:web:2c2405b7bc3439c10a1e80"
 };
 
 // Inicializa o Firebase
