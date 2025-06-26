@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>App Mobilidade Urbana</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: sans-serif;
+      background: #f0f2f5;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+    h1 { margin-bottom: 2rem; color: #333; }
+    .botao {
+      padding: 1rem 2rem;
+      margin: 1rem;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 1.2rem;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .botao:hover {
+      background: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <h1>Escolha o seu perfil</h1>
+  <button class="botao" onclick="window.location.href='taxista.html'">Sou Taxista</button>
+  <button class="botao" onclick="window.location.href='passageiro.html'">Sou Passageiro</button>
+
+  <script type="module">
+    // Inicialização mínima do Firebase (caso queira usar na index para logging futuramente)
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBfBqOOcOmog_6V9ZUxc02PtVYv2Z64mEQ",
+      authDomain: "autofaq-c0c21.firebaseapp.com",
+      databaseURL: "https://autofaq-c0c21-default-rtdb.firebaseio.com",
+      projectId: "autofaq-c0c21",
+      storageBucket: "autofaq-c0c21.appspot.com",
+      messagingSenderId: "174442660737",
+      appId: "1:174442660737:web:2c2405b7bc3439c10a1e80"
+    };
+
+    initializeApp(firebaseConfig);
+  </script>
+</body>
+</html>

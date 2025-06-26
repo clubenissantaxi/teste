@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Taxista</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <style>
+    html, body, #mapa {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      width: 100%;
+    }
+    #status {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: white;
+      padding: 10px;
+      border-radius: 6px;
+      font-size: 14px;
+      z-index: 1000;
+      box-shadow: 0 0 5px rgba(0,0,0,0.3);
+    }
+  </style>
+</head>
+<body>
+  <div id="status">🔄 Localizando...</div>
+  <div id="mapa"></div>
+
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getDatabase, ref, set, onDisconnect, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+    import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBfBqOOcOmog_6V9ZUxc02PtVYv2Z64mEQ",
+      authDomain: "autofaq-c0c21.firebaseapp.com",
+      databaseURL: "https://autofaq-c0c21-default-rtdb.firebaseio.com",
+      projectId: "autofaq-c0c21",
+      storageBucket: "autofaq-c0c21.appspot.com",
+      messagingSenderId: "174442660737",
+      appId: "1:174442660737:web:2c2405b7bc3439c10a1e80"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    const auth = getAuth();
+
+    const status = document.getElementById("status");
+    const mapa = L.map("mapa").setView([-14.235, -51.925], 5);
+
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(mapa);
+
+    let marcador;
+    let uid;
+
+    signInAnonymously(auth).then(() => {
+      onAuthStateChanged(auth, user => {
+        if (user) {
+          uid = user.uid;
+          const userRef = ref(db, "taxistasOnline/" + uid);
+
+          onDisconnect(userRef).remove();
+
+          if (navigator.geolocation) {
+            navigator.geolocation.watchPosition(pos => {
+              const lat = pos.coords.latitude;
+              const lon = pos.coords.longitude;
+
+              status.textContent = `🟢 Sua posição: ${lat.toFixed(5)}, ${lon.toFixed(5)}`;
+
+              set(userRef, {
+                nome: "Taxista",
+                latitude: lat,
+                longitude: lon
+              });
+
+              if (marcador) mapa.removeLayer(marcador);
+              marcador = L.marker([lat, lon]).addTo(mapa);
+              marcador.bindPopup("Você está aqui").openPopup();
+              mapa.setView([lat, lon], 15);
+
+            }, err => {
+              status.textContent = "❌ Erro ao obter GPS: " + err.message;
+            });
+          } else {
+            status.textContent = "❌ Geolocalização não suportada.";
+          }
+        }
+      });
+    });
+  </script>
+</body>
+</html>

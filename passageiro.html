@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Passageiro</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <style>
+    html, body, #mapa {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      width: 100%;
+    }
+    #status {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: white;
+      padding: 10px;
+      border-radius: 6px;
+      font-size: 14px;
+      z-index: 1000;
+      box-shadow: 0 0 5px rgba(0,0,0,0.3);
+    }
+    #popupContainer {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: white;
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.3);
+      z-index: 1001;
+      display: none;
+    }
+    #popupContainer button {
+      margin-top: 10px;
+      padding: 8px 16px;
+      background: #28a745;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div id="status">🔄 Buscando motoristas...</div>
+  <div id="mapa"></div>
+  <div id="popupContainer">
+    <div id="popupText"></div>
+    <button onclick="irAteMotorista()">Ir até o motorista</button>
+  </div>
+
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBfBqOOcOmog_6V9ZUxc02PtVYv2Z64mEQ",
+      authDomain: "autofaq-c0c21.firebaseapp.com",
+      databaseURL: "https://autofaq-c0c21-default-rtdb.firebaseio.com",
+      projectId: "autofaq-c0c21",
+      storageBucket: "autofaq-c0c21.appspot.com",
+      messagingSenderId: "174442660737",
+      appId: "1:174442660737:web:2c2405b7bc3439c10a1e80"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    const status = document.getElementById("status");
+    const mapa = L.map("mapa").setView([-14.235, -51.925], 5);
+    const popupContainer = document.getElementById("popupContainer");
+    const popupText = document.getElementById("popupText");
+
+    let selectedMotorista = null;
+
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(mapa);
+
+    const marcadores = {};
+
+    const taxistasRef = ref(db, "taxistasOnline");
+    onValue(taxistasRef, snapshot => {
+      const dados = snapshot.val();
+      if (!dados) {
+        status.textContent = "🔍 Nenhum motorista online.";
+        return;
+      }
+
+      status.textContent = `🧍 Motoristas encontrados: ${Object.keys(dados).length}`;
+
+      for (let id in marcadores) {
+        mapa.removeLayer(marcadores[id]);
+      }
+
+      for (let id in dados) {
+        const t = dados[id];
+        const marker = L.marker([t.latitude, t.longitude]).addTo(mapa);
+        marker.bindPopup(`${t.nome}`);
+        marker.on('click', () => {
+          selectedMotorista = t;
+          popupText.innerHTML = `Chamar motorista <strong>${t.nome}</strong>?`;
+          popupContainer.style.display = 'block';
+        });
+        marcadores[id] = marker;
+      }
+    });
+
+    window.irAteMotorista = () => {
+      if (selectedMotorista) {
+        const url = `https://www.google.com/maps/dir/?api=1&destination=${selectedMotorista.latitude},${selectedMotorista.longitude}`;
+        window.open(url, '_blank');
+      }
+    };
+  </script>
+</body>
+</html>
