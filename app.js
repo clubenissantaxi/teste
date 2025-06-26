@@ -12,6 +12,7 @@ const firebaseConfig = {
 // Inicializa o Firebase
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
+console.log("Firebase inicializado");
 
 // Função para calcular distância entre dois pontos (Haversine)
 function calculateDistance(lat1, lon1, lat2, lon2) {
@@ -61,6 +62,7 @@ function initializeDriver() {
         (position) => {
           const { latitude, longitude } = position.coords;
           status.textContent = `Localização: ${latitude.toFixed(4)}, ${longitude.toFixed(4)}`;
+          console.log(`Motorista ${driverId} atualizado: ${latitude}, ${longitude}`);
 
           // Atualiza o marcador no mapa
           if (marker) {
@@ -81,6 +83,7 @@ function initializeDriver() {
         },
         (error) => {
           status.textContent = 'Erro ao obter localização: ' + error.message;
+          console.error('Erro na geolocalização:', error);
         },
         { enableHighAccuracy: true }
       );
@@ -97,6 +100,7 @@ function initializeDriver() {
       }
       // Remove do Firebase
       db.ref('drivers/' + driverId).remove();
+      console.log(`Motorista ${driverId} removido do Firebase`);
     }
   });
 }
@@ -119,18 +123,26 @@ function initializePassenger() {
       passengerMarker = L.marker([latitude, longitude]).addTo(map)
         .bindPopup('Você está aqui!');
       map.setView([latitude, longitude], 13);
+      console.log(`Passageiro localizado: ${latitude}, ${longitude}`);
 
       // Busca taxistas no Firebase
       db.ref('drivers').on('value', (snapshot) => {
-        driversList.innerHTML = '';
+        console.log('Dados recebidos do Firebase:', snapshot.val());
+        // Limpa marcadores antigos
+        Object.values(driverMarkers).forEach(marker => map.removeLayer(marker));
         driverMarkers = {};
+        driversList.innerHTML = '';
+
         const drivers = snapshot.val();
+        const currentTime = Date.now();
+        const timeout = 5 * 60 * 1000; // 5 minutos
 
         if (drivers) {
           status.textContent = 'Taxistas encontrados!';
           Object.keys(drivers).forEach((driverId) => {
             const driver = drivers[driverId];
-            if (driver.active) {
+            // Remove motoristas inativos ou com timestamp antigo
+            if (driver.active && currentTime - driver.timestamp < timeout) {
               const distance = calculateDistance(latitude, longitude, driver.latitude, driver.longitude);
               const li = document.createElement('li');
               li.className = 'p-2 bg-white rounded-lg shadow mb-2 cursor-pointer hover:bg-gray-200';
@@ -139,12 +151,18 @@ function initializePassenger() {
                 selectedDriverId = driverId;
                 callDriverButton.classList.remove('hidden');
                 map.setView([driver.latitude, driver.longitude], 13);
+                console.log(`Taxista selecionado: ${driverId}`);
               });
               driversList.appendChild(li);
 
               // Adiciona marcador do taxista
               driverMarkers[driverId] = L.marker([driver.latitude, driver.longitude]).addTo(map)
                 .bindPopup(`Taxista ${driverId.slice(-4)}`);
+              console.log(`Marcador do taxista ${driverId}: ${driver.latitude}, ${driver.longitude}`);
+            } else {
+              // Remove motorista inativo ou expirado do Firebase
+              db.ref('drivers/' + driverId).remove();
+              console.log(`Motorista ${driverId} removido por inatividade`);
             }
           });
         } else {
@@ -154,6 +172,7 @@ function initializePassenger() {
     },
     (error) => {
       status.textContent = 'Erro ao obter localização: ' + error.message;
+      console.error('Erro na geolocalização do passageiro:', error);
     }
   );
 
@@ -162,6 +181,7 @@ function initializePassenger() {
     if (selectedDriverId) {
       alert(`Corrida solicitada com o taxista ${selectedDriverId.slice(-4)}!`);
       // Aqui você pode adicionar lógica para notificar o taxista via Firebase
+      console.log(`Corrida solicitada com taxista ${selectedDriverId}`);
     } else {
       alert('Selecione um taxista primeiro!');
     }

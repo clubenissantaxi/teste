@@ -46,21 +46,19 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-database-compat.js"></script>
 </head>
 <body class="bg-gray-100">
   <div class="container mx-auto p-4">
-    <h1 class="text-2xl font-bold mb-4">Taxista - Localização</h1>
-    <div id="map" class="h-96 rounded-lg"></div>
-    <div class="mt-4">
-      <p id="status" class="text-lg">🔄 Localizando...</p>
-      <button id="toggle-active" class="bg-blue-500 text-white py-2 px-4 rounded-lg mt-2 hover:bg-blue-600">Ativar Localização</button>
-    </div>
+    <h1 class="text-2xl font-bold text-center mb-4">Taxista - Localização</h1>
+    <div id="status" class="text-center mb-4">🔄 Localizando...</div>
+    <div id="map" class="h-96 w-full rounded-lg shadow"></div>
+    <button id="toggle-active" class="mt-4 w-full bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600">Ativar Localização</button>
   </div>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js"></script>
   <script src="app.js"></script>
   <script>
-    initializeDriver();
+    document.addEventListener('DOMContentLoaded', initializeDriver);
   </script>
 </body>
 </html>
