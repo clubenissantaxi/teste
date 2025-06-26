@@ -1,63 +1,37 @@
-<script type="text/javascript">
-        var gk_isXlsx = false;
-        var gk_xlsxFileLookup = {};
-        var gk_fileData = {};
-        function filledCell(cell) {
-          return cell !== '' && cell != null;
-        }
-        function loadFileData(filename) {
-        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
-            try {
-                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
-                var firstSheetName = workbook.SheetNames[0];
-                var worksheet = workbook.Sheets[firstSheetName];
-
-                // Convert sheet to JSON to filter blank rows
-                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
-                // Filter out blank rows (rows where all cells are empty, null, or undefined)
-                var filteredData = jsonData.filter(row => row.some(filledCell));
-
-                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
-                var headerRowIndex = filteredData.findIndex((row, index) =>
-                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
-                );
-                // Fallback
-                if (headerRowIndex === -1 || headerRowIndex > 25) {
-                  headerRowIndex = 0;
-                }
-
-                // Convert filtered JSON back to CSV
-                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
-                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
-                return csv;
-            } catch (e) {
-                console.error(e);
-                return "";
-            }
-        }
-        return gk_fileData[filename] || "";
-        }
-        </script><!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Passageiro - Buscar Motorista</title>
-  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-database-compat.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <script src="app.js" defer></script>
 </head>
-<body class="bg-gray-100 flex flex-col items-center justify-center h-screen">
-  <h1 class="text-2xl font-bold mb-4">Passageiro - Buscar Motorista</h1>
-  <div id="status" class="text-lg mb-4">🔄 Buscando motoristas...</div>
-  <div class="mb-4 w-full max-w-md">
-    <input id="destination" type="text" placeholder="Digite o endereço de destino" class="w-full p-2 border rounded">
-    <button id="submit-destination" class="mt-2 w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600">Confirmar Destino</button>
+
+<body class="bg-gray-100">
+  <div class="container mx-auto p-4">
+    <h1 class="text-2xl font-bold text-center mb-4">Passageiro - Buscar Motorista</h1>
+    <div id="status" class="text-center mb-4">🔄 Aguarde, obtendo localização...</div>
+    <div id="map" class="h-96 w-full rounded-lg shadow mb-4"></div>
+
+    <button id="confirm-location" class="w-full bg-blue-600 text-white py-2 px-4 rounded-lg mb-4 hidden">
+      Confirmar Localização
+    </button>
+
+    <ul id="drivers-list" class="mb-4"></ul>
+    <button id="call-driver"
+      class="hidden w-full bg-green-500 text-white py-2 px-4 rounded-lg hover:bg-green-600">Chamar Taxista</button>
   </div>
-  <div id="map" class="w-full max-w-md h-64 mb-4"></div>
-  <ul id="drivers-list" class="w-full max-w-md"></ul>
-  <button id="call-driver" class="hidden mt-4 bg-green-500 text-white p-2 rounded hover:bg-green-600">Chamar Taxista</button>
+
+  <!-- Firebase versão compatível com app.js -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+  <script src="app.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', initializePassenger);
+  </script>
 </body>
+
 </html>

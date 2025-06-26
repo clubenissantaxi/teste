@@ -31,6 +31,7 @@ function initializeMap(elementId, center = [-23.5505, -46.6333]) {
   return map;
 }
 
+// ========== TAXISTA ==========
 function initializeDriver() {
   const map = initializeMap('map');
   let marker = null;
@@ -39,7 +40,6 @@ function initializeDriver() {
   let isActive = false;
 
   const status = document.getElementById('status');
-  const passengerInfo = document.getElementById('passenger-info');
   const toggleButton = document.getElementById('toggle-active');
 
   toggleButton.addEventListener('click', () => {
@@ -74,18 +74,6 @@ function initializeDriver() {
         },
         { enableHighAccuracy: true }
       );
-
-      // Listen for assigned passenger
-      db.ref('drivers/' + driverId + '/passenger').on('value', (snapshot) => {
-        const passengerData = snapshot.val();
-        if (passengerData) {
-          passengerInfo.classList.remove('hidden');
-          passengerInfo.textContent = `Passageiro atribuído: Destino - ${passengerData.destination}`;
-        } else {
-          passengerInfo.classList.add('hidden');
-          passengerInfo.textContent = '';
-        }
-      });
     } else {
       if (watchId) navigator.geolocation.clearWatch(watchId);
       watchId = null;
@@ -96,108 +84,76 @@ function initializeDriver() {
   });
 }
 
+// ========== PASSAGEIRO ==========
 function initializePassenger() {
   const map = initializeMap('map');
   let passengerMarker = null;
   let driverMarkers = {};
   let selectedDriverId = null;
-  let passengerId = 'passenger_' + Math.random().toString(36).substr(2, 9);
-  let destinationSet = false;
+  let confirmedLocation = null;
 
   const status = document.getElementById('status');
-  const destinationInput = document.getElementById('destination');
-  const submitDestinationButton = document.getElementById('submit-destination');
   const driversList = document.getElementById('drivers-list');
   const callDriverButton = document.getElementById('call-driver');
-
-  submitDestinationButton.addEventListener('click', () => {
-    const destination = destinationInput.value.trim();
-    if (destination) {
-      destinationSet = true;
-      status.textContent = 'Agora escolha seu motorista';
-      driversList.classList.remove('hidden');
-      callDriverButton.classList.remove('hidden');
-    } else {
-      alert('Por favor, insira um endereço de destino válido.');
-    }
-  });
+  const confirmButton = document.getElementById('confirm-location');
 
   navigator.geolocation.getCurrentPosition(
     (position) => {
       const { latitude, longitude } = position.coords;
-      passengerMarker = L.marker([latitude, longitude]).addTo(map).bindPopup('Você está aqui!');
-      map.setView([latitude, longitude], 13);
+      map.setView([latitude, longitude], 15);
 
-      db.ref('drivers').on('value', (snapshot) => {
-        Object.values(driverMarkers).forEach(marker => map.removeLayer(marker));
-        driverMarkers = {};
-        driversList.innerHTML = '';
+      passengerMarker = L.marker([latitude, longitude], { draggable: true })
+        .addTo(map)
+        .bindPopup('Arraste para ajustar seu local')
+        .openPopup();
 
-        const drivers = snapshot.val();
-        const currentTime = Date.now();
-        const timeout = 5 * 60 * 1000;
+      confirmButton.classList.remove('hidden');
 
-        if (drivers && destinationSet) {
-          status.textContent = 'Taxistas encontrados! Clique no ícone do táxi no mapa para selecionar.';
-          Object.keys(drivers).forEach((driverId) => {
-            const driver = drivers[driverId];
-            if (driver.active && currentTime - driver.timestamp < timeout) {
-              const distance = calculateDistance(latitude, longitude, driver.latitude, driver.longitude);
-              const li = document.createElement('li');
-              li.className = 'p-2 bg-white rounded-lg shadow mb-2 cursor-pointer hover:bg-gray-200';
-              li.textContent = `Taxista ${driverId.slice(-4)} - ${distance} km`;
-              li.addEventListener('click', () => {
-                selectedDriverId = driverId;
-                map.setView([driver.latitude, driver.longitude], 13);
-              });
-              driversList.appendChild(li);
-
-              driverMarkers[driverId] = L.marker([driver.latitude, driver.longitude], {
-                icon: L.icon({
-                  iconUrl: 'https://cdn-icons-png.flaticon.com/512/1048/1048315.png',
-                  iconSize: [38, 38],
-                  iconAnchor: [19, 38],
-                  popupAnchor: [0, -38]
-                })
-              }).addTo(map).bindPopup(`Taxista ${driverId.slice(-4)}`).on('click', () => {
-                selectedDriverId = driverId;
-                map.setView([driver.latitude, driver.longitude], 13);
-              });
-            } else {
-              db.ref('drivers/' + driverId).remove();
-            }
-          });
-        } else {
-          status.textContent = destinationSet ? 'Nenhum taxista disponível' : 'Insira o destino para buscar taxistas';
-        }
-      });
-
-      callDriverButton.addEventListener('click', () => {
-        if (selectedDriverId && destinationSet) {
-          const destination = destinationInput.value.trim();
-          db.ref('passengers/' + passengerId).set({
-            latitude,
-            longitude,
-            destination,
-            driverId: selectedDriverId,
-            timestamp: Date.now()
-          });
-          db.ref('drivers/' + selectedDriverId + '/passenger').set({
-            passengerId,
-            destination,
-            timestamp: Date.now()
-          });
-          alert(`Corrida solicitada com o taxista ${selectedDriverId.slice(-4)}!`);
-          callDriverButton.classList.add('hidden');
-          driversList.classList.add('hidden');
-          status.textContent = 'Corrida iniciada! Aguardando confirmação do taxista.';
-        } else {
-          alert('Selecione um taxista e confirme o destino primeiro!');
-        }
+      confirmButton.addEventListener('click', () => {
+        const pos = passengerMarker.getLatLng();
+        confirmedLocation = { lat: pos.lat, lng: pos.lng };
+        passengerMarker.bindPopup('Local confirmado!').openPopup();
+        confirmButton.disabled = true;
+        buscarTaxistas(confirmedLocation.lat, confirmedLocation.lng);
       });
     },
     (error) => {
       status.textContent = 'Erro ao obter localização: ' + error.message;
     }
   );
+
+  function buscarTaxistas(lat, lng) {
+    db.ref('drivers').on('value', (snapshot) => {
+      Object.values(driverMarkers).forEach(marker => map.removeLayer(marker));
+      driverMarkers = {};
+      driversList.innerHTML = '';
+
+      const drivers = snapshot.val();
+      const currentTime = Date.now();
+      const timeout = 5 * 60 * 1000;
+
+      if (drivers) {
+        status.textContent = 'Taxistas encontrados!';
+        Object.keys(drivers).forEach((driverId) => {
+          const driver = drivers[driverId];
+          if (driver.active && currentTime - driver.timestamp < timeout) {
+            const distance = calculateDistance(lat, lng, driver.latitude, driver.longitude);
+
+            const marker = L.marker([driver.latitude, driver.longitude]).addTo(map);
+            marker.bindPopup(`Taxi ${driverId.slice(-4)}<br><button onclick="solicitarCorrida('${driverId}')">Chamar</button>`);
+            driverMarkers[driverId] = marker;
+          } else {
+            db.ref('drivers/' + driverId).remove();
+          }
+        });
+      } else {
+        status.textContent = 'Nenhum taxista disponível';
+      }
+    });
+  }
+}
+
+function solicitarCorrida(driverId) {
+  alert('Solicitação enviada ao taxista ' + driverId.slice(-4));
+  // Em breve: enviar dados para o Firebase aqui
 }
