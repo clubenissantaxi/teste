@@ -39,6 +39,7 @@ function initializeDriver() {
   let isActive = false;
 
   const status = document.getElementById('status');
+  const passengerInfo = document.getElementById('passenger-info');
   const toggleButton = document.getElementById('toggle-active');
 
   toggleButton.addEventListener('click', () => {
@@ -73,6 +74,18 @@ function initializeDriver() {
         },
         { enableHighAccuracy: true }
       );
+
+      // Listen for assigned passenger
+      db.ref('drivers/' + driverId + '/passenger').on('value', (snapshot) => {
+        const passengerData = snapshot.val();
+        if (passengerData) {
+          passengerInfo.classList.remove('hidden');
+          passengerInfo.textContent = `Passageiro atribuído: Destino - ${passengerData.destination}`;
+        } else {
+          passengerInfo.classList.add('hidden');
+          passengerInfo.textContent = '';
+        }
+      });
     } else {
       if (watchId) navigator.geolocation.clearWatch(watchId);
       watchId = null;
@@ -88,10 +101,26 @@ function initializePassenger() {
   let passengerMarker = null;
   let driverMarkers = {};
   let selectedDriverId = null;
+  let passengerId = 'passenger_' + Math.random().toString(36).substr(2, 9);
+  let destinationSet = false;
 
   const status = document.getElementById('status');
+  const destinationInput = document.getElementById('destination');
+  const submitDestinationButton = document.getElementById('submit-destination');
   const driversList = document.getElementById('drivers-list');
   const callDriverButton = document.getElementById('call-driver');
+
+  submitDestinationButton.addEventListener('click', () => {
+    const destination = destinationInput.value.trim();
+    if (destination) {
+      destinationSet = true;
+      status.textContent = 'Agora escolha seu motorista';
+      driversList.classList.remove('hidden');
+      callDriverButton.classList.remove('hidden');
+    } else {
+      alert('Por favor, insira um endereço de destino válido.');
+    }
+  });
 
   navigator.geolocation.getCurrentPosition(
     (position) => {
@@ -108,8 +137,8 @@ function initializePassenger() {
         const currentTime = Date.now();
         const timeout = 5 * 60 * 1000;
 
-        if (drivers) {
-          status.textContent = 'Taxistas encontrados!';
+        if (drivers && destinationSet) {
+          status.textContent = 'Taxistas encontrados! Clique no ícone do táxi no mapa para selecionar.';
           Object.keys(drivers).forEach((driverId) => {
             const driver = drivers[driverId];
             if (driver.active && currentTime - driver.timestamp < timeout) {
@@ -119,19 +148,51 @@ function initializePassenger() {
               li.textContent = `Taxista ${driverId.slice(-4)} - ${distance} km`;
               li.addEventListener('click', () => {
                 selectedDriverId = driverId;
-                callDriverButton.classList.remove('hidden');
                 map.setView([driver.latitude, driver.longitude], 13);
               });
               driversList.appendChild(li);
 
-              driverMarkers[driverId] = L.marker([driver.latitude, driver.longitude]).addTo(map)
-                .bindPopup(`Taxista ${driverId.slice(-4)}`);
+              driverMarkers[driverId] = L.marker([driver.latitude, driver.longitude], {
+                icon: L.icon({
+                  iconUrl: 'https://cdn-icons-png.flaticon.com/512/1048/1048315.png',
+                  iconSize: [38, 38],
+                  iconAnchor: [19, 38],
+                  popupAnchor: [0, -38]
+                })
+              }).addTo(map).bindPopup(`Taxista ${driverId.slice(-4)}`).on('click', () => {
+                selectedDriverId = driverId;
+                map.setView([driver.latitude, driver.longitude], 13);
+              });
             } else {
               db.ref('drivers/' + driverId).remove();
             }
           });
         } else {
-          status.textContent = 'Nenhum taxista disponível';
+          status.textContent = destinationSet ? 'Nenhum taxista disponível' : 'Insira o destino para buscar taxistas';
+        }
+      });
+
+      callDriverButton.addEventListener('click', () => {
+        if (selectedDriverId && destinationSet) {
+          const destination = destinationInput.value.trim();
+          db.ref('passengers/' + passengerId).set({
+            latitude,
+            longitude,
+            destination,
+            driverId: selectedDriverId,
+            timestamp: Date.now()
+          });
+          db.ref('drivers/' + selectedDriverId + '/passenger').set({
+            passengerId,
+            destination,
+            timestamp: Date.now()
+          });
+          alert(`Corrida solicitada com o taxista ${selectedDriverId.slice(-4)}!`);
+          callDriverButton.classList.add('hidden');
+          driversList.classList.add('hidden');
+          status.textContent = 'Corrida iniciada! Aguardando confirmação do taxista.';
+        } else {
+          alert('Selecione um taxista e confirme o destino primeiro!');
         }
       });
     },
@@ -139,12 +200,4 @@ function initializePassenger() {
       status.textContent = 'Erro ao obter localização: ' + error.message;
     }
   );
-
-  callDriverButton.addEventListener('click', () => {
-    if (selectedDriverId) {
-      alert(`Corrida solicitada com o taxista ${selectedDriverId.slice(-4)}!`);
-    } else {
-      alert('Selecione um taxista primeiro!');
-    }
-  });
 }
