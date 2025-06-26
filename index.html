@@ -42,26 +42,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Passageiro - Buscar Motorista</title>
+  <title>Escolha seu perfil</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-database-compat.js"></script>
 </head>
-<body class="bg-gray-100">
-  <div class="container mx-auto p-4">
-    <h1 class="text-2xl font-bold mb-4">Passageiro - Buscar Motorista</h1>
-    <div id="map" class="h-96 rounded-lg"></div>
-    <div class="mt-4">
-      <p id="status" class="text-lg">🔄 Buscando motoristas...</p>
-      <div id="drivers-list" class="mt-4"></div>
-      <button id="call-driver" class="bg-green-500 text-white py-2 px-4 rounded-lg mt-2 hover:bg-green-600 hidden">Chamar Taxista</button>
+<body class="bg-gray-100 flex items-center justify-center h-screen">
+  <div class="text-center">
+    <h1 class="text-3xl font-bold mb-8">Escolha o seu perfil</h1>
+    <div class="space-y-4">
+      <a href="taxista.html" class="block bg-blue-500 text-white py-3 px-6 rounded-lg text-lg hover:bg-blue-600">Sou Taxista</a>
+      <a href="passageiro.html" class="block bg-green-500 text-white py-3 px-6 rounded-lg text-lg hover:bg-green-600">Sou Passageiro</a>
     </div>
   </div>
-  <script src="app.js"></script>
-  <script>
-    initializePassenger();
-  </script>
 </body>
 </html>
