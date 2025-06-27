@@ -1,3 +1,5 @@
+import { ref, set } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
 function validarCPF(cpf) {
   cpf = cpf.replace(/[^\d]+/g,'');
   if (cpf.length !== 11 || /^(\d)\1+$/.test(cpf)) return false;
@@ -24,7 +26,6 @@ document.getElementById('signup-form').addEventListener('submit', function(e) {
 
   if (!validarCPF(cpf)) return alert('CPF inválido.');
 
-  // Verifica duplicidade de tipo por CPF
   db.ref('users').orderByChild('cpf').equalTo(cpf).once('value')
     .then(snapshot => {
       const usuarios = snapshot.val();
@@ -39,7 +40,7 @@ document.getElementById('signup-form').addEventListener('submit', function(e) {
       return auth.createUserWithEmailAndPassword(email, password);
     })
     .then(({ user }) => {
-      return db.ref('users/' + user.uid).set({ nome: name, cpf, telefone: phone, tipo: type });
+      return set(ref(db, 'users/' + user.uid), { nome: name, cpf, telefone: phone, tipo: type });
     })
     .then(() => window.location.replace('inicio.html'))
     .catch(err => alert('Erro no cadastro: ' + err.message));
