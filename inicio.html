@@ -1,54 +1,29 @@
-<script type="text/javascript">
-        var gk_isXlsx = false;
-        var gk_xlsxFileLookup = {};
-        var gk_fileData = {};
-        function filledCell(cell) {
-          return cell !== '' && cell != null;
-        }
-        function loadFileData(filename) {
-        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
-            try {
-                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
-                var firstSheetName = workbook.SheetNames[0];
-                var worksheet = workbook.Sheets[firstSheetName];
-
-                // Convert sheet to JSON to filter blank rows
-                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
-                // Filter out blank rows (rows where all cells are empty, null, or undefined)
-                var filteredData = jsonData.filter(row => row.some(filledCell));
-
-                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
-                var headerRowIndex = filteredData.findIndex((row, index) =>
-                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
-                );
-                // Fallback
-                if (headerRowIndex === -1 || headerRowIndex > 25) {
-                  headerRowIndex = 0;
-                }
-
-                // Convert filtered JSON back to CSV
-                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
-                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
-                return csv;
-            } catch (e) {
-                console.error(e);
-                return "";
-            }
-        }
-        return gk_fileData[filename] || "";
-        }
-        </script><!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Início - SouTaxi</title>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Início</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-  <h1>Bem-vindo ao SouTaxi</h1>
-  <button>Modo Passageiro</button>
-  <button>Modo Taxista</button>
-  <button>Sair</button>
+<body class="bg-white flex items-center justify-center h-screen p-4">
+  <div class="text-center space-y-4">
+    <img src="logo.webp" alt="SouTaxi" class="mx-auto w-32" />
+    <h1 class="text-xl font-bold">Bem-vindo ao SouTaxi</h1>
+    <button onclick="window.location.href='passageiro.html'" class="w-full bg-green-500 text-white py-2 rounded">Modo Passageiro</button>
+    <button onclick="window.location.href='taxista.html'" class="w-full bg-blue-500 text-white py-2 rounded">Modo Taxista</button>
+    <button onclick="logout()" class="w-full bg-gray-300 text-black py-2 rounded">Sair</button>
+  </div>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+  <script src="app.js"></script>
+  <script>
+    firebase.auth().onAuthStateChanged(user => {
+      if (!user) window.location.replace('login.html');
+    });
+    function logout() {
+      firebase.auth().signOut().then(() => window.location.replace('index.html'));
+    }
+  </script>
 </body>
 </html>
