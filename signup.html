@@ -2,22 +2,30 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Cadastro</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-green-600 flex items-center justify-center h-screen p-4">
-  <div class="w-full max-w-sm bg-white rounded-2xl shadow p-6">
-    <h1 class="text-2xl font-bold text-center mb-6">Crie sua conta</h1>
+<body class="bg-white flex items-center justify-center h-screen p-4">
+  <div class="w-full max-w-sm space-y-6">
+    <img src="logo.webp" alt="SouTaxi" class="mx-auto w-32" />
     <form id="signup-form" class="space-y-4">
-      <input type="tel" id="new-phone" placeholder="(XX) XXXXX-XXXX" required class="w-full border rounded px-3 py-2 text-lg"/>
-      <input type="password" id="new-password" placeholder="Senha (mín. 6 dígitos)" required class="w-full border rounded px-3 py-2 text-lg"/>
-      <button type="submit" class="w-full bg-green-500 text-white py-2 rounded-full text-lg hover:bg-green-600">Cadastrar</button>
+      <input id="name" type="text" placeholder="Nome completo" required class="w-full border rounded px-3 py-2"/>
+      <input id="cpf" type="text" placeholder="CPF (somente números)" required class="w-full border rounded px-3 py-2"/>
+      <input id="phone" type="tel" placeholder="+55 DDD Número" required class="w-full border rounded px-3 py-2"/>
+      <input id="email" type="email" placeholder="Email" required class="w-full border rounded px-3 py-2"/>
+      <input id="password" type="password" placeholder="Senha" required class="w-full border rounded px-3 py-2"/>
+      <select id="type" required class="w-full border rounded px-3 py-2">
+        <option value="passageiro">Sou Passageiro</option>
+        <option value="taxista">Sou Taxista</option>
+      </select>
+      <button type="submit" class="w-full bg-green-500 text-white py-2 rounded">Cadastrar</button>
     </form>
-    <p class="mt-6 text-center text-sm text-gray-600">Já tem conta? <a href="login.html" class="text-green-700 hover:underline">Entrar</a></p>
+    <p class="text-sm text-center">Já tem conta? <a href="login.html" class="text-green-600 underline">Entrar</a></p>
   </div>
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
   <script src="app.js"></script>
   <script src="signup.js"></script>
 </body>

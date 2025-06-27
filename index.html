@@ -1,33 +1,27 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-  <title>Perfil</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
-  <script src="app.js"></script>
-  <script>
-    firebase.auth().onAuthStateChanged(user => {
-      if (!user) {
-        return window.location.replace('login.html');
-      }
-      const btnTaxi = document.getElementById('btn-taxi');
-      if (user.isAnonymous) {
-        btnTaxi.classList.add('opacity-50','pointer-events-none');
-      }
-    });
-  </script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>SouTaxi</title>
+  <style>
+    body {
+      margin: 0; background: white; display: flex;
+      justify-content: center; align-items: center; height: 100vh;
+    }
+    #logo {
+      opacity: 0;
+      transition: opacity 1s ease-in;
+      width: 220px;
+    }
+  </style>
 </head>
-<body class="bg-gray-100 flex items-center justify-center h-screen p-4">
-  <div class="w-full max-w-xs text-center space-y-6">
-    <h1 class="text-3xl font-bold">Como deseja viajar?</h1>
-    <button id="btn-taxi" onclick="location.href='taxista.html'"
-            class="w-full bg-blue-500 text-white py-3 rounded-full hover:bg-blue-600">Sou Taxista</button>
-    <button onclick="location.href='passageiro.html'"
-            class="w-full bg-green-500 text-white py-3 rounded-full hover:bg-green-600">Sou Passageiro</button>
-  </div>
+<body>
+  <img src="logo.webp" id="logo" alt="Logo" />
+  <script>
+    const logo = document.getElementById('logo');
+    setTimeout(() => logo.style.opacity = 1, 100);
+    setTimeout(() => window.location.href = "login.html", 1600);
+  </script>
 </body>
 </html>
