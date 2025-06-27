@@ -1,31 +1,33 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Escolha o seu perfil</title>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Perfil</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Firebase JS SDK -->
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
   <script src="app.js"></script>
   <script>
     firebase.auth().onAuthStateChanged(user => {
       if (!user) {
-        window.location.replace('login.html');
+        return window.location.replace('login.html');
+      }
+      const btnTaxi = document.getElementById('btn-taxi');
+      if (user.isAnonymous) {
+        btnTaxi.classList.add('opacity-50','pointer-events-none');
       }
     });
   </script>
 </head>
-<body class="flex items-center justify-center h-screen bg-gray-100">
-  <div class="text-center">
-    <h1 class="text-3xl font-bold mb-6">Escolha o seu perfil</h1>
-    <div class="space-y-4">
-      <a href="taxista.html"
-        class="block w-64 mx-auto bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600">Sou Taxista</a>
-      <a href="passageiro.html"
-        class="block w-64 mx-auto bg-green-500 text-white py-2 px-4 rounded-lg hover:bg-green-600">Sou Passageiro</a>
-    </div>
+<body class="bg-gray-100 flex items-center justify-center h-screen p-4">
+  <div class="w-full max-w-xs text-center space-y-6">
+    <h1 class="text-3xl font-bold">Como deseja viajar?</h1>
+    <button id="btn-taxi" onclick="location.href='taxista.html'"
+            class="w-full bg-blue-500 text-white py-3 rounded-full hover:bg-blue-600">Sou Taxista</button>
+    <button onclick="location.href='passageiro.html'"
+            class="w-full bg-green-500 text-white py-3 rounded-full hover:bg-green-600">Sou Passageiro</button>
   </div>
 </body>
 </html>
