@@ -27,6 +27,9 @@
 
   <script>
     let driverRef = null;
+    let watchId = null;
+    let marker = null;
+    const passengerMarkers = {};
 
     function initializeDriver() {
       const map = L.map('map').setView([-15.793889, -47.882778], 13);
@@ -41,15 +44,26 @@
         popupAnchor: [0, -40]
       });
 
-      let marker = null;
+      const passengerIcon = L.icon({
+        iconUrl: 'https://cdn-icons-png.flaticon.com/512/447/447031.png',
+        iconSize: [30, 30],
+        iconAnchor: [15, 30],
+        popupAnchor: [0, -30]
+      });
 
-      document.getElementById('toggle-active').addEventListener('click', () => {
+      const button = document.getElementById('toggle-active');
+
+      function ativarLocalizacao() {
         if (!navigator.geolocation) {
           document.getElementById('status').textContent = 'Geolocalização não suportada.';
           return;
         }
 
-        navigator.geolocation.watchPosition(pos => {
+        button.textContent = 'Desativar Localização';
+        button.classList.remove('bg-blue-500', 'hover:bg-blue-600');
+        button.classList.add('bg-red-500', 'hover:bg-red-600');
+
+        watchId = navigator.geolocation.watchPosition(pos => {
           const { latitude, longitude } = pos.coords;
           map.setView([latitude, longitude], 15);
 
@@ -74,16 +88,71 @@
             });
           });
         });
+
+        // Ler passageiros e exibir no mapa
+        firebase.database().ref('locations/passageiros').on('value', snapshot => {
+          const data = snapshot.val();
+
+          // Limpa marcadores antigos
+          Object.values(passengerMarkers).forEach(m => map.removeLayer(m));
+          Object.keys(passengerMarkers).forEach(k => delete passengerMarkers[k]);
+
+          for (const uid in data) {
+            const { lat, lng, nome, timestamp } = data[uid];
+            const ativo = (Date.now() - timestamp < 60000);
+            if (ativo) {
+              const marker = L.marker([lat, lng], { icon: passengerIcon }).addTo(map).bindPopup(`👤 Passageiro: ${nome || uid}`);
+              passengerMarkers[uid] = marker;
+            }
+          }
+        });
+      }
+
+      function desativarLocalizacao() {
+        if (watchId !== null) {
+          navigator.geolocation.clearWatch(watchId);
+          watchId = null;
+        }
+
+        if (driverRef) {
+          driverRef.remove();
+          driverRef = null;
+        }
+
+        if (marker) {
+          map.removeLayer(marker);
+          marker = null;
+        }
+
+        Object.values(passengerMarkers).forEach(m => map.removeLayer(m));
+        Object.keys(passengerMarkers).forEach(k => delete passengerMarkers[k]);
+
+        button.textContent = 'Ativar Localização';
+        button.classList.remove('bg-red-500', 'hover:bg-red-600');
+        button.classList.add('bg-blue-500', 'hover:bg-blue-600');
+
+        document.getElementById('status').textContent = '🔴 Localização desativada';
+      }
+
+      let ativo = false;
+      button.addEventListener('click', () => {
+        if (ativo) {
+          desativarLocalizacao();
+        } else {
+          ativarLocalizacao();
+        }
+        ativo = !ativo;
       });
     }
 
     firebase.auth().onAuthStateChanged(user => {
       if (user) {
         initializeDriver();
-
         window.addEventListener('beforeunload', () => {
-          const uid = firebase.auth().currentUser.uid;
-          firebase.database().ref('locations/taxistas/' + uid).remove();
+          const uid = firebase.auth().currentUser?.uid;
+          if (uid) {
+            firebase.database().ref('locations/taxistas/' + uid).remove();
+          }
         });
       }
     });
