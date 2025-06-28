@@ -1,24 +1,66 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Taxista - Localização</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 </head>
+
 <body class="bg-gray-100">
   <div class="container mx-auto p-4">
     <h1 class="text-2xl font-bold text-center mb-4">Taxista - Localização</h1>
     <div id="status" class="text-center mb-4">🔄 Localizando...</div>
     <div id="map" class="h-96 w-full rounded-lg shadow"></div>
-    <button id="toggle-active" class="mt-4 w-full bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600">Ativar Localização</button>
+    <button id="toggle-active" class="mt-4 w-full bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600">
+      Ativar Localização
+    </button>
   </div>
-  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+
+  <!-- Firebase + App init -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
   <script src="app.js"></script>
-  <script>document.addEventListener('DOMContentLoaded', initializeDriver);</script>
+
+  <!-- Script de mapa -->
+  <script>
+    function initializeDriver() {
+      const map = L.map('map').setView([-15.793889, -47.882778], 13); // Padrão: Brasília
+
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+      }).addTo(map);
+
+      if (!navigator.geolocation) {
+        document.getElementById('status').textContent = 'Geolocalização não suportada.';
+        return;
+      }
+
+      document.getElementById('toggle-active').addEventListener('click', () => {
+        document.getElementById('status').textContent = '📍 Buscando localização...';
+
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            const lat = position.coords.latitude;
+            const lng = position.coords.longitude;
+
+            map.setView([lat, lng], 15);
+            L.marker([lat, lng]).addTo(map).bindPopup('Você está aqui').openPopup();
+
+            document.getElementById('status').textContent = '✅ Localização atualizada!';
+          },
+          () => {
+            document.getElementById('status').textContent = '❌ Não foi possível obter localização.';
+          }
+        );
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', initializeDriver);
+  </script>
 </body>
+
 </html>

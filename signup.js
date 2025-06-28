@@ -26,8 +26,14 @@ document.getElementById('signup-form').addEventListener('submit', function (e) {
   const password = document.getElementById('password').value;
   const type = document.getElementById('type').value;
 
+  const errorBox = document.getElementById('signup-error');
+  const errorMsg = document.getElementById('signup-error-message');
+  errorBox.classList.add('hidden');
+  errorMsg.textContent = '';
+
   if (!validarCPF(cpf)) {
-    alert('CPF inválido.');
+    errorMsg.textContent = 'CPF inválido.';
+    errorBox.classList.remove('hidden');
     return;
   }
 
@@ -45,6 +51,25 @@ document.getElementById('signup-form').addEventListener('submit', function (e) {
       window.location.replace('inicio.html');
     })
     .catch(err => {
-      alert('Erro no cadastro: ' + err.message);
+      console.log('Erro no cadastro:', err.code, err.message);
+
+      let mensagemAmigavel = 'Erro ao tentar cadastrar.';
+
+      switch (err.code) {
+        case 'auth/email-already-in-use':
+          mensagemAmigavel = 'Este email já está em uso.';
+          break;
+        case 'auth/invalid-email':
+          mensagemAmigavel = 'Email inválido.';
+          break;
+        case 'auth/weak-password':
+          mensagemAmigavel = 'A senha deve ter pelo menos 6 caracteres.';
+          break;
+        default:
+          mensagemAmigavel = 'Erro inesperado. Tente novamente.';
+      }
+
+      errorMsg.textContent = mensagemAmigavel;
+      errorBox.classList.remove('hidden');
     });
 });

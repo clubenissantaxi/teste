@@ -18,7 +18,13 @@
       <button type="submit" class="w-full bg-blue-500 text-white py-2 rounded">Entrar</button>
     </form>
 
-    <div id="login-error" class="text-red-600 text-sm text-left" style="display: none;"></div>
+    <!-- Caixa de erro visual -->
+    <div id="login-error"
+      class="hidden bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative text-left text-sm"
+      role="alert">
+      <strong class="font-bold">Erro:</strong>
+      <span class="block sm:inline" id="login-error-message">Email ou senha inválidos.</span>
+    </div>
 
     <button id="btn-autonomo" class="w-full bg-gray-300 text-black py-2 rounded">Entrar como Autônomo</button>
     <p class="text-sm">Não tem cadastro? <a href="signup.html" class="text-blue-600 underline">Cadastre-se</a></p>

@@ -11,6 +11,7 @@
 <body class="bg-white flex items-center justify-center h-screen p-4">
   <div class="w-full max-w-sm space-y-6">
     <img src="logo.webp" alt="SouTaxi" class="mx-auto w-32" />
+
     <form id="signup-form" class="space-y-4">
       <input id="name" type="text" placeholder="Nome completo" required class="w-full border rounded px-3 py-2" />
       <input id="cpf" type="text" placeholder="CPF (somente números)" required
@@ -24,6 +25,15 @@
       </select>
       <button type="submit" class="w-full bg-green-500 text-white py-2 rounded">Cadastrar</button>
     </form>
+
+    <!-- Caixa de erro estilizada -->
+    <div id="signup-error"
+      class="hidden bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative text-left text-sm"
+      role="alert">
+      <strong class="font-bold">Erro:</strong>
+      <span class="block sm:inline" id="signup-error-message">Mensagem de erro.</span>
+    </div>
+
     <p class="text-sm text-center">Já tem conta? <a href="login.html" class="text-green-600 underline">Entrar</a></p>
   </div>
 
@@ -32,10 +42,10 @@
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js" defer></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js" defer></script>
 
-  <!-- Firebase config e app init -->
+  <!-- Firebase config e inicialização -->
   <script src="app.js" defer></script>
 
-  <!-- Script de cadastro (após app.js) -->
+  <!-- Script de cadastro -->
   <script src="signup.js" defer></script>
 </body>
 
