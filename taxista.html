@@ -20,46 +20,65 @@
     </button>
   </div>
 
-  <!-- Firebase + App init -->
+  <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
   <script src="app.js"></script>
 
-  <!-- Script de mapa -->
   <script>
     function initializeDriver() {
-      const map = L.map('map').setView([-15.793889, -47.882778], 13); // Padrão: Brasília
-
+      const map = L.map('map').setView([-15.793889, -47.882778], 13);
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; OpenStreetMap contributors'
       }).addTo(map);
 
-      if (!navigator.geolocation) {
-        document.getElementById('status').textContent = 'Geolocalização não suportada.';
-        return;
-      }
-
-      document.getElementById('toggle-active').addEventListener('click', () => {
-        document.getElementById('status').textContent = '📍 Buscando localização...';
-
-        navigator.geolocation.getCurrentPosition(
-          (position) => {
-            const lat = position.coords.latitude;
-            const lng = position.coords.longitude;
-
-            map.setView([lat, lng], 15);
-            L.marker([lat, lng]).addTo(map).bindPopup('Você está aqui').openPopup();
-
-            document.getElementById('status').textContent = '✅ Localização atualizada!';
-          },
-          () => {
-            document.getElementById('status').textContent = '❌ Não foi possível obter localização.';
-          }
-        );
+      const markerIcon = L.icon({
+        iconUrl: 'https://cdn-icons-png.flaticon.com/512/61/61231.png',
+        iconSize: [40, 40],
+        iconAnchor: [20, 40],
+        popupAnchor: [0, -40]
       });
+
+      let marker = null;
+      document.getElementById('toggle-active').addEventListener('click', () => {
+        if (!navigator.geolocation) {
+          document.getElementById('status').textContent = 'Geolocalização não suportada.';
+          return;
+        }
+
+        navigator.geolocation.watchPosition(pos => {
+          const { latitude, longitude } = pos.coords;
+          map.setView([latitude, longitude], 15);
+
+          if (!marker) {
+            marker = L.marker([latitude, longitude], { icon: markerIcon }).addTo(map).bindPopup('Você (taxista)').openPopup();
+          } else {
+            marker.setLatLng([latitude, longitude]);
+          }
+
+          document.getElementById('status').textContent = '✅ Localização ativa';
+
+          const uid = firebase.auth().currentUser.uid;
+          firebase.database().ref('locations/taxistas/' + uid).set({
+            lat: latitude,
+            lng: longitude,
+            timestamp: Date.now()
+          });
+        }, () => {
+          document.getElementById('status').textContent = '❌ Não foi possível obter localização.';
+        }, { enableHighAccuracy: true });
+      });
+
+      // Ver outros (passageiros e taxistas)
+      firebase.database().ref('locations/passageiros').on('value', () => { });
+      firebase.database().ref('locations/taxistas').on('value', () => { });
     }
 
-    document.addEventListener('DOMContentLoaded', initializeDriver);
+    firebase.auth().onAuthStateChanged(user => {
+      if (user) initializeDriver();
+      else firebase.auth().signInAnonymously().then(() => initializeDriver());
+    });
   </script>
 </body>
 

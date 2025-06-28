@@ -13,7 +13,7 @@
 <body class="bg-gray-100">
   <div class="container mx-auto p-4">
     <h1 class="text-2xl font-bold text-center mb-4">Passageiro - Buscar Motorista</h1>
-    <div id="status" class="text-center mb-4">🔄 Buscando motoristas...</div>
+    <div id="status" class="text-center mb-4">🔄 Buscando taxistas...</div>
     <div id="map" class="h-96 w-full rounded-lg shadow mb-4"></div>
     <ul id="drivers-list" class="mb-4"></ul>
     <button id="call-driver" class="hidden w-full bg-green-500 text-white py-2 px-4 rounded-lg hover:bg-green-600">
@@ -23,41 +23,65 @@
 
   <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
   <script src="app.js"></script>
 
-  <!-- Script do mapa -->
   <script>
     function initializePassenger() {
-      const map = L.map('map').setView([-15.793889, -47.882778], 13); // Brasília como centro inicial
-
+      const map = L.map('map').setView([-15.793889, -47.882778], 13);
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; OpenStreetMap contributors'
       }).addTo(map);
 
-      if (!navigator.geolocation) {
-        document.getElementById('status').textContent = 'Geolocalização não suportada.';
-        return;
+      const markers = {};
+      const taxiIcon = L.icon({
+        iconUrl: 'https://cdn-icons-png.flaticon.com/512/61/61231.png',
+        iconSize: [40, 40],
+        iconAnchor: [20, 40],
+        popupAnchor: [0, -40]
+      });
+
+      // Mostra a localização do passageiro
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(pos => {
+          const { latitude, longitude } = pos.coords;
+          L.marker([latitude, longitude]).addTo(map).bindPopup('Você').openPopup();
+          map.setView([latitude, longitude], 14);
+        });
       }
 
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const lat = position.coords.latitude;
-          const lng = position.coords.longitude;
+      // Lê apenas os taxistas do banco
+      const ref = firebase.database().ref('locations/taxistas');
+      ref.on('value', snapshot => {
+        const data = snapshot.val();
+        document.getElementById('drivers-list').innerHTML = '';
+        Object.values(markers).forEach(m => map.removeLayer(m));
+        Object.keys(markers).forEach(k => delete markers[k]);
 
-          map.setView([lat, lng], 15);
-          L.marker([lat, lng]).addTo(map).bindPopup('Você está aqui').openPopup();
+        for (const uid in data) {
+          const { lat, lng, timestamp } = data[uid];
+          const ativo = (Date.now() - timestamp < 60000); // 60s
 
-          document.getElementById('status').textContent = '✅ Localização detectada!';
-          document.getElementById('call-driver').classList.remove('hidden');
-        },
-        () => {
-          document.getElementById('status').textContent = '❌ Não foi possível obter localização.';
+          if (ativo) {
+            const marker = L.marker([lat, lng], { icon: taxiIcon }).addTo(map).bindPopup('🚕 Taxista disponível');
+            markers[uid] = marker;
+
+            const li = document.createElement('li');
+            li.textContent = `Taxista: ${lat.toFixed(5)}, ${lng.toFixed(5)}`;
+            document.getElementById('drivers-list').appendChild(li);
+          }
         }
-      );
+
+        document.getElementById('status').textContent =
+          Object.keys(markers).length > 0 ? '✅ Taxistas localizados.' : 'Nenhum taxista disponível.';
+      });
     }
 
-    document.addEventListener('DOMContentLoaded', initializePassenger);
+    firebase.auth().onAuthStateChanged(user => {
+      if (user) initializePassenger();
+      else firebase.auth().signInAnonymously().then(() => initializePassenger());
+    });
   </script>
 </body>
 
