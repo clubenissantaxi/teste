@@ -21,13 +21,14 @@
     </button>
   </div>
 
-  <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
   <script src="app.js"></script>
 
   <script>
+    let passengerRef = null;
+
     function initializePassenger() {
       const map = L.map('map').setView([-15.793889, -47.882778], 13);
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -42,16 +43,27 @@
         popupAnchor: [0, -40]
       });
 
-      // Mostra a localização do passageiro
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(pos => {
           const { latitude, longitude } = pos.coords;
           L.marker([latitude, longitude]).addTo(map).bindPopup('Você').openPopup();
           map.setView([latitude, longitude], 14);
+
+          const uid = firebase.auth().currentUser.uid;
+          passengerRef = firebase.database().ref('locations/passageiros/' + uid);
+
+          firebase.database().ref('users/' + uid + '/nome').once('value').then(snapshot => {
+            const nome = snapshot.val() || 'Passageiro';
+            passengerRef.set({
+              lat: latitude,
+              lng: longitude,
+              nome: nome,
+              timestamp: Date.now()
+            });
+          });
         });
       }
 
-      // Lê apenas os taxistas do banco
       const ref = firebase.database().ref('locations/taxistas');
       ref.on('value', snapshot => {
         const data = snapshot.val();
@@ -60,15 +72,16 @@
         Object.keys(markers).forEach(k => delete markers[k]);
 
         for (const uid in data) {
-          const { lat, lng, timestamp } = data[uid];
-          const ativo = (Date.now() - timestamp < 60000); // 60s
+          const { lat, lng, nome, timestamp } = data[uid];
+          const ativo = (Date.now() - timestamp < 60000);
 
           if (ativo) {
-            const marker = L.marker([lat, lng], { icon: taxiIcon }).addTo(map).bindPopup('🚕 Taxista disponível');
+            const popupText = nome ? `🚕 Taxista: ${nome}` : '🚕 Taxista';
+            const marker = L.marker([lat, lng], { icon: taxiIcon }).addTo(map).bindPopup(popupText);
             markers[uid] = marker;
 
             const li = document.createElement('li');
-            li.textContent = `Taxista: ${lat.toFixed(5)}, ${lng.toFixed(5)}`;
+            li.textContent = `Taxista: ${nome || uid} - ${lat.toFixed(5)}, ${lng.toFixed(5)}`;
             document.getElementById('drivers-list').appendChild(li);
           }
         }
@@ -81,6 +94,13 @@
     firebase.auth().onAuthStateChanged(user => {
       if (user) initializePassenger();
       else firebase.auth().signInAnonymously().then(() => initializePassenger());
+    });
+
+    window.addEventListener('beforeunload', () => {
+      const uid = firebase.auth().currentUser?.uid;
+      if (uid) {
+        firebase.database().ref('locations/passageiros/' + uid).remove();
+      }
     });
   </script>
 </body>

@@ -20,20 +20,21 @@
     </button>
   </div>
 
-  <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
   <script src="app.js"></script>
 
   <script>
+    let driverRef = null;
+
     function initializeDriver() {
       const map = L.map('map').setView([-15.793889, -47.882778], 13);
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; OpenStreetMap contributors'
       }).addTo(map);
 
-      const markerIcon = L.icon({
+      const taxiIcon = L.icon({
         iconUrl: 'https://cdn-icons-png.flaticon.com/512/61/61231.png',
         iconSize: [40, 40],
         iconAnchor: [20, 40],
@@ -41,6 +42,7 @@
       });
 
       let marker = null;
+
       document.getElementById('toggle-active').addEventListener('click', () => {
         if (!navigator.geolocation) {
           document.getElementById('status').textContent = 'Geolocalização não suportada.';
@@ -52,7 +54,7 @@
           map.setView([latitude, longitude], 15);
 
           if (!marker) {
-            marker = L.marker([latitude, longitude], { icon: markerIcon }).addTo(map).bindPopup('Você (taxista)').openPopup();
+            marker = L.marker([latitude, longitude], { icon: taxiIcon }).addTo(map).bindPopup('Você (taxista)').openPopup();
           } else {
             marker.setLatLng([latitude, longitude]);
           }
@@ -60,24 +62,30 @@
           document.getElementById('status').textContent = '✅ Localização ativa';
 
           const uid = firebase.auth().currentUser.uid;
-          firebase.database().ref('locations/taxistas/' + uid).set({
-            lat: latitude,
-            lng: longitude,
-            timestamp: Date.now()
-          });
-        }, () => {
-          document.getElementById('status').textContent = '❌ Não foi possível obter localização.';
-        }, { enableHighAccuracy: true });
-      });
+          driverRef = firebase.database().ref('locations/taxistas/' + uid);
 
-      // Ver outros (passageiros e taxistas)
-      firebase.database().ref('locations/passageiros').on('value', () => { });
-      firebase.database().ref('locations/taxistas').on('value', () => { });
+          firebase.database().ref('users/' + uid + '/nome').once('value').then(snapshot => {
+            const nome = snapshot.val() || 'Taxista';
+            driverRef.set({
+              lat: latitude,
+              lng: longitude,
+              nome: nome,
+              timestamp: Date.now()
+            });
+          });
+        });
+      });
     }
 
     firebase.auth().onAuthStateChanged(user => {
-      if (user) initializeDriver();
-      else firebase.auth().signInAnonymously().then(() => initializeDriver());
+      if (user) {
+        initializeDriver();
+
+        window.addEventListener('beforeunload', () => {
+          const uid = firebase.auth().currentUser.uid;
+          firebase.database().ref('locations/taxistas/' + uid).remove();
+        });
+      }
     });
   </script>
 </body>
