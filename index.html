@@ -1,27 +1,165 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-  <title>SouTaxi</title>
+  <title>Mapa – Taxista</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
   <style>
-    body {
-      margin: 0; background: white; display: flex;
-      justify-content: center; align-items: center; height: 100vh;
+    body,
+    html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
     }
-    #logo {
-      opacity: 0;
-      transition: opacity 1s ease-in;
-      width: 220px;
+
+    #map {
+      width: 100%;
+      height: 90%;
+    }
+
+    #status {
+      padding: 8px;
+      font-family: sans-serif;
     }
   </style>
 </head>
+
 <body>
-  <img src="logo.webp" id="logo" alt="Logo" />
+  <div id="status">Inicializando...</div>
+  <div id="map"></div>
+
+  <!-- Scripts -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script src="firebase-config.js"></script>
+
   <script>
-    const logo = document.getElementById('logo');
-    setTimeout(() => logo.style.opacity = 1, 100);
-    setTimeout(() => window.location.href = "login.html", 1600);
+    const auth = firebase.auth();
+    const db = firebase.database();
+
+    function createTaxiIcon() {
+      return L.icon({
+        iconUrl: 'taxista.webp',
+        iconSize: [32, 32],
+        iconAnchor: [16, 32],
+        popupAnchor: [0, -32]
+      });
+    }
+
+    function createPassengerIcon() {
+      return L.icon({
+        iconUrl: 'passageiro.webp',
+        iconSize: [32, 32],
+        iconAnchor: [16, 32],
+        popupAnchor: [0, -32]
+      });
+    }
+
+    function initMap() {
+      const map = L.map('map').setView([-15.77972, -47.92972], 5);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+      }).addTo(map);
+      return map;
+    }
+
+    auth.onAuthStateChanged(user => {
+      if (!user) return window.location.href = 'login-taxista.html';
+
+      const uid = user.uid;
+      const nome = localStorage.getItem('usuario_nome') || 'Taxista';
+      const map = initMap();
+      const status = document.getElementById('status');
+      let myMarker = null;
+      let watchId = null;
+
+      // Posição inicial
+      navigator.geolocation.getCurrentPosition(pos => {
+        const { latitude, longitude } = pos.coords;
+        status.textContent = `📍 ${latitude.toFixed(5)}, ${longitude.toFixed(5)}`;
+
+        myMarker = L.marker([latitude, longitude], { icon: createTaxiIcon() })
+          .addTo(map)
+          .bindPopup(nome)
+          .openPopup();
+        map.setView([latitude, longitude], 17);
+
+        const ref = db.ref(`usuarios/${uid}`);
+        ref.set({ nome, tipo: 'taxista', latitude, longitude, timestamp: Date.now() });
+        ref.onDisconnect().remove();
+
+        watchId = navigator.geolocation.watchPosition(updatePos, err => {
+          status.textContent = `Erro no GPS: ${err.message}`;
+        }, {
+          enableHighAccuracy: true,
+          timeout: 10000,
+          maximumAge: 0
+        });
+
+      }, err => {
+        status.textContent = `Erro ao obter localização inicial: ${err.message}`;
+      }, {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 0
+      });
+
+      function updatePos(pos) {
+        const { latitude, longitude } = pos.coords;
+        status.textContent = `📍 ${latitude.toFixed(5)}, ${longitude.toFixed(5)}`;
+        if (myMarker) {
+          myMarker.setLatLng([latitude, longitude]);
+          map.panTo([latitude, longitude]);
+        }
+        db.ref(`usuarios/${uid}`).set({ nome, tipo: 'taxista', latitude, longitude, timestamp: Date.now() });
+      }
+
+      // Exibir outros usuários
+      db.ref('usuarios').on('value', snap => {
+        const dados = snap.val() || {};
+        const agora = Date.now();
+        const limite = 5 * 60 * 1000;
+
+        // Remove todos os marcadores (menos o próprio)
+        map.eachLayer(layer => {
+          if (layer instanceof L.Marker && layer !== myMarker) {
+            map.removeLayer(layer);
+          }
+        });
+
+        Object.entries(dados).forEach(([id, info]) => {
+          if (id === uid) return;
+          if (agora - info.timestamp > limite) return;
+
+          const icon = info.tipo === 'taxista' ? createTaxiIcon() : createPassengerIcon();
+
+          L.marker([info.latitude, info.longitude], { icon })
+            .addTo(map)
+            .bindPopup(`${info.nome} (${info.tipo})`);
+        });
+      });
+
+      // ✅ Mostrar marcadores fixos (eventos adicionados no admin)
+      db.ref('marcadores').on('value', snap => {
+        const dados = snap.val() || {};
+        Object.values(dados).forEach(m => {
+          L.marker([m.lat, m.lng])
+            .addTo(map)
+            .bindPopup(`<b>${m.titulo}</b><br>${m.comentario}`);
+        });
+      });
+
+      // Limpeza ao sair
+      window.addEventListener('beforeunload', () => {
+        if (watchId) navigator.geolocation.clearWatch(watchId);
+        db.ref(`usuarios/${uid}`).remove();
+      });
+    });
   </script>
 </body>
+
 </html>
