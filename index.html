@@ -55,7 +55,6 @@
 
     const status = document.getElementById('status');
 
-    // Tenta obter localização atual do dispositivo
     navigator.geolocation.getCurrentPosition(pos => {
       const { latitude, longitude } = pos.coords;
       status.textContent = `📍 ${latitude.toFixed(5)}, ${longitude.toFixed(5)}`;
@@ -72,7 +71,7 @@
       maximumAge: 0
     });
 
-    // ✅ Exibir todos os marcadores fixos (eventos do Firebase)
+    // Mostrar marcadores fixos do Firebase
     db.ref('marcadores').on('value', snap => {
       const dados = snap.val() || {};
       Object.values(dados).forEach(m => {
