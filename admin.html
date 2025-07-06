@@ -2,112 +2,46 @@
 <html lang="pt-BR">
 
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Painel do Administrador</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-  <style>
-    #map {
-      height: 80vh;
-    }
-
-    form {
-      margin: 10px 0;
-    }
-
-    input,
-    textarea,
-    button {
-      display: block;
-      margin: 5px 0;
-      width: 100%;
-      max-width: 400px;
-    }
-  </style>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-database-compat.js"></script>
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script src="script.js"></script>
 </head>
 
 <body>
-  <h2>Painel Admin – Adicionar Evento no Mapa</h2>
-  <form id="form">
-    <input type="text" id="endereco" placeholder="Endereço ou coordenadas (ex: -15.79,-47.92)" required />
-    <input type="text" id="titulo" placeholder="Título do evento" required />
-    <textarea id="comentario" placeholder="Comentário/descrição"></textarea>
-    <button type="submit">Adicionar Marcador</button>
-  </form>
-  <div id="map"></div>
-
-  <!-- Scripts -->
-  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
-  <script src="firebase-config.js"></script>
-
+  <h1>Painel do Administrador</h1>
+  <div id="auth-section">
+    <h2>Login</h2>
+    <input type="email" id="email" placeholder="Email">
+    <input type="password" id="password" placeholder="Senha">
+    <button onclick="login()">Entrar</button>
+  </div>
+  <div id="admin-section" style="display: none;">
+    <h2>Gerenciar Pontos</h2>
+    <div id="map" style="height: 500px; width: 100%;"></div>
+    <input type="text" id="title" placeholder="Título (ex: Lanchonete XYZ)">
+    <input type="text" id="comment" placeholder="Comentário (ex: Horário: 8h-22h)">
+    <button onclick="addPoint()">Adicionar Ponto</button>
+    <h3>Pontos Existentes</h3>
+    <ul id="points-list"></ul>
+  </div>
   <script>
-    const db = firebase.database();
-    const map = L.map('map').setView([-15.77972, -47.92972], 5);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; OpenStreetMap contributors'
-    }).addTo(map);
-
-    const form = document.getElementById('form');
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const endereco = document.getElementById('endereco').value.trim();
-      const titulo = document.getElementById('titulo').value.trim();
-      const comentario = document.getElementById('comentario').value.trim();
-      let lat, lng;
-
-      try {
-        if (endereco.includes(',')) {
-          [lat, lng] = endereco.split(',').map(Number);
-        } else {
-          const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(endereco)}`;
-          const res = await fetch(url);
-          const data = await res.json();
-          if (!data[0]) return alert('Endereço não encontrado');
-          lat = parseFloat(data[0].lat);
-          lng = parseFloat(data[0].lon);
+    document.addEventListener('DOMContentLoaded', () => {
+      initMapAdmin();
+      firebase.auth().onAuthStateChanged((user) => {
+        if (user) {
+          document.getElementById('auth-section').style.display = 'none';
+          document.getElementById('admin-section').style.display = 'block';
+          loadPoints();
         }
-
-        const ref = db.ref('marcadores').push();
-        await ref.set({ lat, lng, titulo, comentario });
-
-        // Exibe local no mapa e centraliza
-        const marker = L.marker([lat, lng])
-          .addTo(map)
-          .bindPopup(`<b>${titulo}</b><br>${comentario}<br><button onclick="removerMarcador('${ref.key}')">🗑 Excluir</button>`)
-          .openPopup();
-
-        map.setView([lat, lng], 17);
-        alert('✅ Marcador adicionado!');
-        form.reset();
-
-      } catch (error) {
-        alert('Erro ao adicionar marcador.');
-        console.error(error);
-      }
-    });
-
-    db.ref('marcadores').on('value', snap => {
-      map.eachLayer(layer => {
-        if (layer instanceof L.Marker) map.removeLayer(layer);
-      });
-
-      const dados = snap.val() || {};
-      Object.entries(dados).forEach(([key, m]) => {
-        L.marker([m.lat, m.lng])
-          .addTo(map)
-          .bindPopup(`<b>${m.titulo}</b><br>${m.comentario}<br><button onclick="removerMarcador('${key}')">🗑 Excluir</button>`);
       });
     });
-
-    function removerMarcador(key) {
-      if (confirm('Deseja mesmo excluir este marcador?')) {
-        db.ref(`marcadores/${key}`).remove();
-      }
-    }
-
-    window.removerMarcador = removerMarcador;
   </script>
 </body>
 

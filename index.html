@@ -2,83 +2,23 @@
 <html lang="pt-BR">
 
 <head>
-  <meta charset="UTF-8" />
-  <title>Mapa – Visualização</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mapa do Usuário</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-  <style>
-    body,
-    html {
-      margin: 0;
-      padding: 0;
-      height: 100%;
-    }
-
-    #map {
-      width: 100%;
-      height: 90%;
-    }
-
-    #status {
-      padding: 8px;
-      font-family: sans-serif;
-    }
-  </style>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-database-compat.js"></script>
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script src="script.js"></script>
 </head>
 
 <body>
-  <div id="status">Inicializando mapa...</div>
-  <div id="map"></div>
-
-  <!-- Scripts -->
-  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
-  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-  <script src="firebase-config.js"></script>
-
+  <h1>Mapa com Pontos de Interesse</h1>
+  <div id="map" style="height: 500px; width: 100%;"></div>
   <script>
-    const db = firebase.database();
-
-    function createDefaultIcon() {
-      return L.icon({
-        iconUrl: 'taxista.webp',
-        iconSize: [32, 32],
-        iconAnchor: [16, 32],
-        popupAnchor: [0, -32]
-      });
-    }
-
-    const map = L.map('map').setView([-15.77972, -47.92972], 5);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; OpenStreetMap contributors'
-    }).addTo(map);
-
-    const status = document.getElementById('status');
-
-    navigator.geolocation.getCurrentPosition(pos => {
-      const { latitude, longitude } = pos.coords;
-      status.textContent = `📍 ${latitude.toFixed(5)}, ${longitude.toFixed(5)}`;
-      L.marker([latitude, longitude], { icon: createDefaultIcon() })
-        .addTo(map)
-        .bindPopup("Você está aqui")
-        .openPopup();
-      map.setView([latitude, longitude], 17);
-    }, err => {
-      status.textContent = `Erro ao obter sua localização: ${err.message}`;
-    }, {
-      enableHighAccuracy: true,
-      timeout: 10000,
-      maximumAge: 0
-    });
-
-    // Mostrar marcadores fixos do Firebase
-    db.ref('marcadores').on('value', snap => {
-      const dados = snap.val() || {};
-      Object.values(dados).forEach(m => {
-        L.marker([m.lat, m.lng])
-          .addTo(map)
-          .bindPopup(`<b>${m.titulo}</b><br>${m.comentario}`);
-      });
+    document.addEventListener('DOMContentLoaded', () => {
+      initMapUser();
     });
   </script>
 </body>
