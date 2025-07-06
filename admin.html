@@ -2,8 +2,8 @@
 <html lang="pt-BR">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Painel do Administrador</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
   <link rel="stylesheet" href="style.css">
@@ -22,15 +22,25 @@
     <input type="password" id="password" placeholder="Senha">
     <button onclick="login()">Entrar</button>
   </div>
+
   <div id="admin-section" style="display: none;">
     <h2>Gerenciar Pontos</h2>
-    <div id="map" style="height: 500px; width: 100%;"></div>
+
+    <!-- Mapa -->
+    <div id="map" style="height: 400px; width: 100%; margin-bottom: 10px;"></div>
+
+    <!-- Formulário -->
+    <input type="text" id="search-address" placeholder="Digite o endereço">
+    <button onclick="buscarEndereco()">Buscar</button>
+
     <input type="text" id="title" placeholder="Título (ex: Lanchonete XYZ)">
     <input type="text" id="comment" placeholder="Comentário (ex: Horário: 8h-22h)">
-    <button onclick="addPoint()">Adicionar Ponto</button>
+    <button onclick="addPoint()">Fixar Ponto</button>
+
     <h3>Pontos Existentes</h3>
     <ul id="points-list"></ul>
   </div>
+
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       initMapAdmin();
@@ -42,6 +52,38 @@
         }
       });
     });
+
+    let tempMarker;
+
+    function buscarEndereco() {
+      const endereco = document.getElementById('search-address').value;
+      if (!endereco) {
+        alert("Digite um endereço para buscar.");
+        return;
+      }
+
+      fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(endereco)}`)
+        .then(response => response.json())
+        .then(data => {
+          if (data.length === 0) {
+            alert("Endereço não encontrado.");
+            return;
+          }
+
+          const lat = parseFloat(data[0].lat);
+          const lon = parseFloat(data[0].lon);
+
+          if (tempMarker) map.removeLayer(tempMarker);
+          tempMarker = L.marker([lat, lon]).addTo(map);
+          map.setView([lat, lon], 18);
+
+          document.getElementById('title').dataset.lat = lat;
+          document.getElementById('title').dataset.lng = lon;
+        })
+        .catch(() => {
+          alert("Erro ao buscar endereço.");
+        });
+    }
   </script>
 </body>
 
